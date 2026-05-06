@@ -278,7 +278,7 @@ export default function CandidateDetailClient({
                           <div className="w-1.5 h-4 bg-emerald-500 rounded-full" /> Observasi Orang Tua
                         </h3>
                         {(candidate as any).parentEmail && (
-                          <Badge variant="outline" className="text-[10px] border-emerald-100 text-emerald-600 bg-emerald-50/30">
+                          <Badge variant="muted" className="text-[10px] border-emerald-100 text-emerald-600 bg-emerald-50/30">
                             Email: {(candidate as any).parentEmail}
                           </Badge>
                         )}
@@ -302,7 +302,7 @@ export default function CandidateDetailClient({
                           <div className="w-1.5 h-4 bg-blue-500 rounded-full" /> Wawancara Calon Siswa
                         </h3>
                         {(candidate as any).studentEmail && (
-                          <Badge variant="outline" className="text-[10px] border-blue-100 text-blue-600 bg-blue-50/30">
+                          <Badge variant="muted" className="text-[10px] border-blue-100 text-blue-600 bg-blue-50/30">
                             Email: {(candidate as any).studentEmail}
                           </Badge>
                         )}
