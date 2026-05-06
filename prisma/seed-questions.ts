@@ -60,7 +60,7 @@ async function main() {
         type: q.type,
         category: q.category,
         order: q.order,
-        options: q.options || [],
+        options: q.options ? JSON.stringify(q.options) : null,
         level: "SMP"
       }
     })

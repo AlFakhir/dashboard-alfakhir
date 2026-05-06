@@ -34,7 +34,10 @@ async function main() {
 
   for (const q of questions) {
     await prisma.formQuestion.create({
-      data: q,
+      data: {
+        ...q,
+        options: q.options ? JSON.stringify(q.options) : null,
+      },
     })
   }
 
