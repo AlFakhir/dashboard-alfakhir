@@ -12,7 +12,6 @@ export default async function PublicFormPage({ params, searchParams }: Props) {
 
   const { id } = await params
   const { role } = await searchParams
-  const isStudentRole = role === "student" && candidate.level === "SMP"
 
   // 1. Ambil data kandidat
   const candidate = await prisma.candidate.findUnique({
@@ -20,6 +19,8 @@ export default async function PublicFormPage({ params, searchParams }: Props) {
   })
 
   if (!candidate) return notFound()
+
+  const isStudentRole = role === "student" && candidate.level === "SMP"
 
   // 1.5. Cek apakah sudah dikunci secara manual oleh admin
   if (candidate.status === "REVIEWED" || candidate.status === "COMPLETED") {
