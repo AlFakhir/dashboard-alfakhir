@@ -60,9 +60,6 @@ export function Header({ session, isPortal }: HeaderProps) {
   }
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setOrigin(window.location.origin)
-    }
     fetchNotifications()
     const interval = setInterval(fetchNotifications, 30000) // Poll every 30s
     return () => clearInterval(interval)
@@ -162,7 +159,7 @@ export function Header({ session, isPortal }: HeaderProps) {
               Portal Observasi Mandiri
             </DialogTitle>
             <div className="bg-white p-6 rounded-[40px] border-4 border-slate-50 shadow-2xl shadow-slate-200/50 mb-8 flex items-center justify-center mx-auto w-fit">
-              {origin && <QRCodeSVG value={`${origin}/form`} size={220} level="H" />}
+              <QRCodeSVG value="https://dashboard-alfakhir.vercel.app/form" size={220} level="H" />
             </div>
             <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed mb-10">
               Satu QR untuk semua.<br/>Scan untuk memilih unit, ruangan, dan nama siswa.
@@ -302,13 +299,11 @@ export function Header({ session, isPortal }: HeaderProps) {
           </DialogTitle>
           
           <div className="bg-white p-6 rounded-[40px] border-4 border-slate-50 shadow-2xl shadow-slate-200/50 mb-8 flex items-center justify-center mx-auto w-fit">
-            {origin && (
-              <QRCodeSVG 
-                value={`${origin}/form`} 
-                size={220}
-                level="H"
-              />
-            )}
+            <QRCodeSVG 
+              value="https://dashboard-alfakhir.vercel.app/form" 
+              size={220}
+              level="H"
+            />
           </div>
           
           <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed mb-10">

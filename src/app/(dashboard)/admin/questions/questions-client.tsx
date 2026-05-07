@@ -385,7 +385,7 @@ export default function AdminQuestionsClient({ initialQuestions }: Props) {
           <div className="bg-white p-4 rounded-3xl border-4 border-slate-100 shadow-xl mb-6 flex items-center justify-center">
             {origin && (
               <QRCodeSVG 
-                value={`${origin}/questions/${activeLevel.toLowerCase()}`} 
+                value={`https://dashboard-alfakhir.vercel.app/questions/${activeLevel.toLowerCase()}`} 
                 size={200}
                 level="H"
               />

@@ -431,7 +431,7 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
             <div className="bg-white p-4 rounded-3xl border-4 border-[#F1F5F9] shadow-xl mb-6 min-h-[200px] flex items-center justify-center">
               {origin && (
                 <QRCodeSVG 
-                  value={`${origin}/form/${selectedCandidate?.id}${role === "student" ? "?role=student" : ""}`} 
+                  value={`https://dashboard-alfakhir.vercel.app/form/${selectedCandidate?.id}${role === "student" ? "?role=student" : ""}`} 
                   size={200}
                   level="H"
                   includeMargin={false}
@@ -451,7 +451,7 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
             <Button 
               className="w-full bg-primary hover:bg-primary-dark text-white font-bold h-12 rounded-xl shadow-lg shadow-emerald-500/20"
               onClick={() => {
-                const url = `${origin}/form/${selectedCandidate?.id}${role === "student" ? "?role=student" : ""}`;
+                const url = `https://dashboard-alfakhir.vercel.app/form/${selectedCandidate?.id}${role === "student" ? "?role=student" : ""}`;
                 navigator.clipboard.writeText(url);
                 setSelectedCandidate(null);
                 setRole("parent"); // Reset
