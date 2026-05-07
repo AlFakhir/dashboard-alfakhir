@@ -8,7 +8,9 @@ export default auth((req) => {
   // Public routes — no auth needed
   if (
     pathname.startsWith("/login") ||
+    pathname.startsWith("/form") ||
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/form") ||
     pathname.startsWith("/api/webhook")
   ) {
     return NextResponse.next()
