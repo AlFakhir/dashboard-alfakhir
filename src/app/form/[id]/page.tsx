@@ -12,6 +12,7 @@ export default async function PublicFormPage({ params, searchParams }: Props) {
 
   const { id } = await params
   const { role } = await searchParams
+  const isStudentRole = role === "student" && candidate.level === "SMP"
 
   // 1. Ambil data kandidat
   const candidate = await prisma.candidate.findUnique({
@@ -40,9 +41,6 @@ export default async function PublicFormPage({ params, searchParams }: Props) {
   }
 
   // 1.6. Cek apakah role ini sudah pernah mengisi
-  const { id } = await params
-  const { role } = await searchParams
-  const isStudentRole = role === "student" && candidate.level === "SMP"
   const categoryToCheck = isStudentRole ? "SISWA" : "ORANG TUA"
 
   const existingAnswersCount = await prisma.formAnswer.count({
@@ -78,7 +76,6 @@ export default async function PublicFormPage({ params, searchParams }: Props) {
   // 2. Tentukan filter kategori berdasarkan role
   // Jika role === student, ambil yang kategori Siswa-*
   // Jika role === parent atau role kosong, ambil yang kategori non-Siswa
-  const isStudentRole = role === "student" && candidate.level === "SMP"
   
   const questionsRaw = await prisma.formQuestion.findMany({
     where: {
