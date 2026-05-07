@@ -42,6 +42,8 @@ export function Header({ session, isPortal }: HeaderProps) {
   const fetchNotifications = async () => {
     try {
       const res = await fetch("/api/notifications")
+      if (!res.ok) return // Diam saja jika gagal (biasanya karena server restart/dev mode)
+
       const data = await res.json()
       
       if (Array.isArray(data)) {
@@ -51,11 +53,9 @@ export function Header({ session, isPortal }: HeaderProps) {
           }
           return data
         })
-      } else {
-        console.warn("Notifications API returned non-array data:", data)
       }
     } catch (error) {
-      console.error("Failed to fetch notifications:", error)
+      // Hanya log error jika benar-benar fatal, diam saja di mode dev
     }
   }
 
