@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@neondatabase/serverless": "^1.1.0",
+    "@prisma/adapter-neon": "^7.8.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^6.2.1",
     "@radix-ui/react-avatar": "^1.1.11",
@@ -35,6 +37,7 @@
     "react-quill-new": "^3.8.3",
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.5.0",
+    "ws": "^8.20.0",
     "xlsx": "^0.18.5",
     "zod": "^4.4.3",
     "zustand": "^5.0.13"
@@ -45,6 +48,7 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/ws": "^8.18.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
