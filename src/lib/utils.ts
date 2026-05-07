@@ -37,3 +37,18 @@ export function capitalize(str: string): string {
 export function truncate(str: string, n: number): string {
   return str.length > n ? str.slice(0, n) + "..." : str
 }
+
+export function getAcademicYear(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth(); // 0 = Jan, 6 = July
+  
+  // Recruitment for next cycle usually starts before July
+  // If Jan-June: 2026/2027
+  // If July-Dec: 2027/2028
+  if (month >= 6) { 
+    return `${year + 1}/${year + 2}`;
+  } else {
+    return `${year}/${year + 1}`;
+  }
+}

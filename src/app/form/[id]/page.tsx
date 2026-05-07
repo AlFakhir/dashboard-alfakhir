@@ -80,7 +80,10 @@ export default async function PublicFormPage({ params, searchParams }: Props) {
   
   const questionsRaw = await prisma.formQuestion.findMany({
     where: {
-      level: candidate.level,
+      OR: [
+        { level: candidate.level },
+        { level: null }
+      ],
       category: isStudentRole ? "SISWA" : "ORANG TUA"
     },
     orderBy: {

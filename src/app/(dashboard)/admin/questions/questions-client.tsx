@@ -25,6 +25,7 @@ interface Question {
   category: string
   order: number
   level: string | null
+  isSystem: boolean
   options?: string[]
 }
 
@@ -49,7 +50,7 @@ export default function AdminQuestionsClient({ initialQuestions }: Props) {
     }
   }, [])
 
-  const filteredQuestions = questions.filter(q => q.level === activeLevel && q.category === activeCategory)
+  const filteredQuestions = questions.filter(q => (q.level === activeLevel || q.level === null) && q.category === activeCategory)
 
   const handleDelete = async (id: string) => {
     if (confirm("Hapus pertanyaan ini?")) {
@@ -210,20 +211,29 @@ export default function AdminQuestionsClient({ initialQuestions }: Props) {
 
               {/* Actions */}
               <div className="flex items-center gap-2.5 shrink-0">
-                <button 
-                  onClick={() => setEditingQuestion(q)}
-                  className="w-10 h-10 rounded-xl border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300"
-                  title="Edit Soal"
-                >
-                  <Edit3 size={18} />
-                </button>
-                <button 
-                  onClick={() => handleDelete(q.id)}
-                  className="w-10 h-10 rounded-xl border border-rose-100 bg-rose-50 flex items-center justify-center text-rose-400 hover:bg-rose-500 hover:text-white hover:border-rose-500 hover:shadow-lg hover:shadow-rose-500/20 transition-all duration-300"
-                  title="Hapus Soal"
-                >
-                  <Trash2 size={18} />
-                </button>
+                {!q.isSystem ? (
+                  <>
+                    <button 
+                      onClick={() => setEditingQuestion(q)}
+                      className="w-10 h-10 rounded-xl border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300"
+                      title="Edit Soal"
+                    >
+                      <Edit3 size={18} />
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(q.id)}
+                      className="w-10 h-10 rounded-xl border border-rose-100 bg-rose-50 flex items-center justify-center text-rose-400 hover:bg-rose-500 hover:text-white hover:border-rose-500 hover:shadow-lg hover:shadow-rose-500/20 transition-all duration-300"
+                      title="Hapus Soal"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-lg">
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sistem (Permanen)</span>
+                  </div>
+                )}
               </div>
             </div>
           ))

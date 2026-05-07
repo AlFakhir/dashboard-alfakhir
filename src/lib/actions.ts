@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { Level } from "@prisma/client"
+import { getAcademicYear } from "@/lib/utils"
 
 export async function addCandidate(data: { name: string; level: string; room?: string; selectedInterviewer?: string }) {
   try {
@@ -13,6 +14,8 @@ export async function addCandidate(data: { name: string; level: string; room?: s
         room: data.room || null,
         selectedInterviewer: data.selectedInterviewer || null,
         status: "PENDING",
+        // @ts-ignore
+        academicYear: getAcademicYear()
       },
     })
     revalidatePath("/admin/candidates")
@@ -111,6 +114,12 @@ export async function updateQuestion(id: string, data: { text?: string; category
 
 export async function deleteQuestion(id: string) {
   try {
+    const question = await prisma.formQuestion.findUnique({ where: { id } })
+    // @ts-ignore
+    if (question?.isSystem) {
+      return { success: false, error: "Pertanyaan sistem tidak dapat dihapus" }
+    }
+    
     await prisma.formQuestion.delete({ where: { id } })
     revalidatePath("/admin/questions")
     return { success: true }

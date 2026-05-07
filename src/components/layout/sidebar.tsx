@@ -30,23 +30,9 @@ export function Sidebar({ role }: SidebarProps) {
         {
           title: "PUSAT",
           links: [
-            { href: "/admin/admin", label: "Ringkasan", icon: LayoutDashboard },
-            { href: "/admin/candidates", label: "Manajemen Siswa", icon: Users },
+            { href: "/admin/admin", label: "Dashboard Utama", icon: LayoutDashboard },
+            { href: "/admin/candidates", label: "Seluruh Kandidat", icon: Users },
             { href: "/admin/questions", label: "Manajemen Soal", icon: HelpCircle },
-          ],
-        },
-        {
-          title: "UNIT SD",
-          links: [
-            { href: "/sd", label: "Dashboard SD", icon: Monitor },
-            { href: "/admin/sd/candidates", label: "Kandidat SD", icon: Users },
-          ],
-        },
-        {
-          title: "UNIT SMP",
-          links: [
-            { href: "/smp", label: "Dashboard SMP", icon: Monitor },
-            { href: "/admin/smp/candidates", label: "Kandidat SMP", icon: Users },
           ],
         },
         {

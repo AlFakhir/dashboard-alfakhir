@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth"
 export async function POST(req: Request) {
   try {
     const session = await auth()
-    const { candidateId, selectedInterviewer, answers, role } = await req.json()
+    const { candidateId, selectedInterviewer, answers, role, parentPhone, correctedName } = await req.json()
     const email = session?.user?.email || null
 
     if (!candidateId || !answers) {
@@ -45,7 +45,13 @@ export async function POST(req: Request) {
           selectedInterviewer: selectedInterviewer,
           ...(role === "student" 
             ? { studentEmail: email } 
-            : { parentEmail: email }
+            : { 
+                parentEmail: email,
+                // @ts-ignore
+                parentPhone: parentPhone,
+                // @ts-ignore
+                correctedName: correctedName
+              }
           )
         },
       })

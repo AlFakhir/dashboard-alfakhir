@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import {
   BarChart,
   Bar,
@@ -10,6 +11,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts"
+import Link from "next/link"
 import {
   UserPlus,
   History,
@@ -19,7 +21,7 @@ import {
   LayoutGrid,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { formatDate } from "@/lib/utils"
+import { formatDate, getAcademicYear } from "@/lib/utils"
 
 interface Props {
   stats: {
@@ -55,7 +57,26 @@ function StatCard({ icon: Icon, color, value, label }: any) {
   )
 }
 
-export default function AdminOverviewClient({ stats, role = "admin" }: Props & { role?: string }) {
+export default function AdminOverviewClient({ stats: initialStats, role = "admin" }: Props & { role?: string }) {
+  const [stats, setStats] = useState(initialStats)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const level = role === "admin_sd" ? "SD" : role === "admin_smp" ? "SMP" : ""
+        const res = await fetch(`/api/admin/stats${level ? `?level=${level}` : ""}`)
+        if (res.ok) {
+          const data = await res.json()
+          setStats(data)
+        }
+      } catch (error) {
+        // Silent error for polling
+      }
+    }
+
+    const interval = setInterval(fetchStats, 10000) // Poll every 10s
+    return () => clearInterval(interval)
+  }, [role])
 
   const getTitle = () => {
     if (role === "admin_sd") return "Dashboard Unit SD"
@@ -72,7 +93,7 @@ export default function AdminOverviewClient({ stats, role = "admin" }: Props & {
             {getTitle()}
           </h2>
           <p className="text-[14px] text-[#64748B] m-0 mt-1.5 font-bold tracking-widest uppercase opacity-70">
-            Al Fakhir Modern Islamic School • Monitoring Progres
+            Al Fakhir Modern Islamic School • TA {getAcademicYear()} • Monitoring Progres
           </p>
         </div>
         <div className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E2E8F0] rounded-2xl shadow-sm">
@@ -218,7 +239,11 @@ export default function AdminOverviewClient({ stats, role = "admin" }: Props & {
             </div>
           ) : (
             stats.recentObservations.map((obs) => (
-              <div key={obs.id} className="flex items-center justify-between p-4 border border-[#F1F5F9] rounded-2xl hover:border-emerald-200 hover:bg-emerald-50/20 transition-all group">
+              <Link 
+                key={obs.id} 
+                href={`/admin/candidates/${obs.candidateId}`}
+                className="flex items-center justify-between p-4 border border-[#F1F5F9] rounded-2xl hover:border-emerald-200 hover:bg-emerald-50/20 transition-all group cursor-pointer"
+              >
                 <div className="flex items-center gap-4 flex-1">
                   <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-[14px] text-slate-500 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-all shrink-0 italic">
                     {obs.candidate.name.charAt(0)}
@@ -227,15 +252,22 @@ export default function AdminOverviewClient({ stats, role = "admin" }: Props & {
                     <div className="flex items-center gap-2">
                       <div className="text-[14px] font-bold text-[#0F172A] truncate uppercase tracking-tight">{obs.candidate.name}</div>
                       <Badge variant="muted" className="text-[9px] font-black uppercase tracking-tighter px-1.5 h-4 border-slate-200 text-slate-400 bg-white">
-                        {obs.candidate.level} • {obs.candidate.room || "No Room"}
+                        UNIT {obs.candidate.level}
                       </Badge>
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1">
-                      <div className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
-                        <span className="opacity-50">BY:</span> {obs.candidate.parentEmail || obs.candidate.studentEmail || "No Email"}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-1.5">
+                      <div className="text-[11px] text-[#475569] font-black uppercase tracking-tight flex items-center gap-1.5">
+                        <span className="opacity-50">PEWAWANCARA:</span>
+                        <span className="text-emerald-600 font-extrabold">{obs.interviewerName}</span>
                       </div>
+                      <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-300" />
+                      <div className="text-[11px] text-[#475569] font-black uppercase tracking-tight flex items-center gap-1.5">
+                        <span className="opacity-50">RUANGAN:</span>
+                        <span className="text-blue-600 font-extrabold">{obs.candidate.room || "-"}</span>
+                      </div>
+                      <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-300" />
                       <div className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-widest">
-                        Pewawancara: <span className="text-slate-500">{obs.interviewerName}</span> • {formatDate(obs.createdAt)}
+                        {formatDate(obs.createdAt)}
                       </div>
                     </div>
                   </div>
@@ -247,11 +279,11 @@ export default function AdminOverviewClient({ stats, role = "admin" }: Props & {
                   >
                     {obs.recommendation}
                   </Badge>
-                  <button className="h-8 w-8 flex items-center justify-center hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-100 text-slate-300 hover:text-slate-600">
+                  <div className="h-8 w-8 flex items-center justify-center hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-100 text-slate-300 hover:text-slate-600">
                     <MoreVertical size={14} />
-                  </button>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </div>

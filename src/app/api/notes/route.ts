@@ -12,6 +12,7 @@ const NoteSchema = z.object({
   characterNotes: z.string().min(1, "Catatan karakter wajib diisi"),
   otherNotes: z.string().optional(),
   recommendation: z.enum(["Terima", "Pertimbangkan", "Tolak"]),
+  interviewerName: z.string().min(1, "Nama pewawancara wajib diisi"),
   aiSummary: z.string().optional(),
 })
 
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
     const note = await prisma.interviewerNote.create({
       data: {
         candidateId: validated.candidateId,
-        interviewerName: session.user.name || "Unknown",
+        interviewerName: validated.interviewerName,
         interviewerEmail: session.user.email || "",
         observation: validated.observation,
         academicAssessment: validated.academicAssessment,

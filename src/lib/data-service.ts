@@ -21,6 +21,7 @@ export async function getDashboardStats(level?: string) {
     include: {
       candidate: {
         select: {
+          id: true,
           name: true,
           level: true,
           room: true,
@@ -160,6 +161,27 @@ export async function getCandidatesByRoom(room: string) {
       name: true,
       level: true,
       selectedInterviewer: true,
+    }
+  })
+}
+export async function getCandidates(interviewerEmail?: string, level?: string) {
+  const where: any = {}
+  if (level) where.level = level as any
+  
+  // Note: if we want to filter by interviewerEmail, we'd need a relation or a specific field.
+  // For now, let's just return all candidates if no email is provided, 
+  // or handle interviewer filtering if the email is linked to the name.
+  
+  return await prisma.candidate.findMany({
+    where,
+    include: {
+      notes: {
+        take: 1,
+        orderBy: { createdAt: "desc" }
+      }
+    },
+    orderBy: {
+      createdAt: "desc"
     }
   })
 }

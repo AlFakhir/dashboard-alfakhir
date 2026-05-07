@@ -86,3 +86,23 @@ input:focus, select:focus, textarea:focus {
   border-color: #10B981 !important;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
 }
+
+/* Theme Utilities */
+.bg-sd {
+  background-color: var(--color-sd) !important;
+}
+.bg-smp {
+  background-color: var(--color-smp) !important;
+}
+.text-sd {
+  color: var(--color-sd) !important;
+}
+.text-smp {
+  color: var(--color-smp) !important;
+}
+.border-sd {
+  border-color: var(--color-sd) !important;
+}
+.border-smp {
+  border-color: var(--color-smp) !important;
+}

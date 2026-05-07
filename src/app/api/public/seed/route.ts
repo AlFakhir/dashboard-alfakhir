@@ -62,7 +62,13 @@ export async function GET() {
     console.log("Seeding questions via API...")
     
     // Clear existing SMP questions to avoid duplicates if run multiple times
-    await prisma.formQuestion.deleteMany({ where: { level: "SMP" } })
+    await prisma.formQuestion.deleteMany({ 
+      where: { 
+        level: "SMP",
+        // @ts-ignore
+        isSystem: false 
+      } 
+    })
 
     for (const q of questions) {
       await prisma.formQuestion.create({

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, Send, CheckCircle2, Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, getAcademicYear } from "@/lib/utils"
 
 import { INTERVIEWERS } from "@/lib/constants"
 
@@ -59,7 +59,9 @@ export default function PublicFormClient({ candidate, questions, role }: Props) 
         body: JSON.stringify({
           candidateId: candidate.id,
           selectedInterviewer,
-          answers,
+          answers: Object.fromEntries(Object.entries(answers).filter(([k]) => !k.startsWith('sys_'))),
+          parentPhone: answers['sys_phone'],
+          correctedName: answers['sys_name_corr'],
           role,
         }),
       })
@@ -130,7 +132,7 @@ export default function PublicFormClient({ candidate, questions, role }: Props) 
             </h1>
             <div className="space-y-1">
               <p className="text-[14px] text-slate-600 font-medium">
-                Penerimaan Siswa Baru TA 2026/2027
+                Penerimaan Siswa Baru TA {getAcademicYear()}
               </p>
               <p className="text-[13px] text-slate-500">
                 Responden: <span className="font-bold text-slate-700">{role === 'student' ? 'Calon Siswa' : 'Orang Tua'}</span>
@@ -152,6 +154,43 @@ export default function PublicFormClient({ candidate, questions, role }: Props) 
 
         {/* Question Cards */}
         <form onSubmit={handleSubmit} className="space-y-3">
+          {/* PERMANENT PARENT QUESTIONS (Hardcoded) */}
+          {role === 'orang tua' && (
+            <>
+              <div className="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm space-y-5">
+                <div className="space-y-1">
+                  <h3 className="text-[16px] font-medium text-slate-900 leading-relaxed">
+                    Tulis nama ananda yang benar jika ada kesalahan penulisan nama dari kami <span className="text-red-500 ml-0.5">*</span>
+                  </h3>
+                </div>
+                <input
+                  required
+                  type="text"
+                  value={answers['sys_name_corr'] || ""}
+                  onChange={(e) => setAnswers({ ...answers, ['sys_name_corr']: e.target.value })}
+                  className="w-full bg-transparent border-b border-slate-200 py-2 text-[14px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-b-2 focus:border-slate-900 transition-all"
+                  placeholder="Jawaban Anda"
+                />
+              </div>
+
+              <div className="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm space-y-5">
+                <div className="space-y-1">
+                  <h3 className="text-[16px] font-medium text-slate-900 leading-relaxed">
+                    Isi nomor telepon aktif yang bisa dihubungi <span className="text-red-500 ml-0.5">*</span>
+                  </h3>
+                </div>
+                <input
+                  required
+                  type="text"
+                  value={answers['sys_phone'] || ""}
+                  onChange={(e) => setAnswers({ ...answers, ['sys_phone']: e.target.value })}
+                  className="w-full bg-transparent border-b border-slate-200 py-2 text-[14px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-b-2 focus:border-slate-900 transition-all"
+                  placeholder="Contoh: 0812XXXXXXXX"
+                />
+              </div>
+            </>
+          )}
+
           {questions.map((q, idx) => (
             <div key={q.id} className="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm space-y-5">
               <div className="space-y-1">

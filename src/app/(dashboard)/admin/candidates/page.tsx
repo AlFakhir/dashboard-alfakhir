@@ -1,33 +1,41 @@
 import { auth } from "@/lib/auth"
-import { getCandidates, getAllNotes } from "@/lib/google-sheets"
+import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import AdminCandidatesClient from "./admin-candidates-client"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Semua Kandidat",
+  title: "Seluruh Kandidat - Al Fakhir",
 }
 
 export default async function AdminCandidatesPage() {
   const session = await auth()
   if (!session || !session.user?.role?.startsWith("admin")) redirect("/login")
 
-  const candidates = await getCandidates()
-  const notes = await getAllNotes()
-  const noteMap = new Map(notes.map((n) => [n.candidateId, n]))
+  const candidates = await prisma.candidate.findMany({
+    include: {
+      notes: {
+        take: 1,
+        orderBy: { createdAt: "desc" }
+      }
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  })
 
   const enriched = candidates.map((c) => ({
     ...c,
-    note: noteMap.get(c.id) || null,
-    hasNote: noteMap.has(c.id),
-    createdAt: c.submittedAt ? new Date(c.submittedAt) : new Date(),
-    daysSinceForm: c.submittedAt
+    note: c.notes[0] || null,
+    hasNote: c.notes.length > 0,
+    createdAt: c.createdAt,
+    daysSinceForm: c.createdAt
       ? Math.floor(
-          (Date.now() - new Date(c.submittedAt).getTime()) /
+          (Date.now() - new Date(c.createdAt).getTime()) /
             (1000 * 60 * 60 * 24)
         )
       : null,
   }))
 
-  return <AdminCandidatesClient candidates={enriched} />
+  return <AdminCandidatesClient candidates={enriched as any} />
 }

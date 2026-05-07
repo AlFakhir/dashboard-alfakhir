@@ -50,6 +50,8 @@ function renderMarkdown(text: string) {
     .replace(/^- (.+)$/gm, '<li>$1</li>')
     .replace(/(<li>[^<]*<\/li>)/g, '<ul>$1</ul>')
     .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    // Highlight Percentage
+    .replace(/(\d+)%/g, '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">$1%</span>')
     .replace(/\n\n/g, '</p><p>')
     .replace(/^(?!<[hlu])/gm, '')
 }
@@ -67,6 +69,9 @@ export default function CandidateDetailClient({
   const [familySupport, setFamilySupport] = useState(existingNote?.familySupport || "")
   const [characterNotes, setCharacterNotes] = useState(existingNote?.characterNotes || "")
   const [otherNotes, setOtherNotes] = useState(existingNote?.otherNotes || "")
+  const [interviewerNameInput, setInterviewerNameInput] = useState(
+    existingNote?.interviewerName || (candidate as any).selectedInterviewer || ""
+  )
   const [recommendation, setRecommendation] = useState<"Terima" | "Pertimbangkan" | "Tolak" | "">(
     (existingNote?.recommendation as any) || ""
   )
@@ -123,6 +128,7 @@ export default function CandidateDetailClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           candidateId: candidate.id,
+          interviewerName: interviewerNameInput,
           observation,
           academicAssessment,
           familySupport,
@@ -233,6 +239,19 @@ export default function CandidateDetailClient({
                 </div>
               ) : (
                 <div className="space-y-5">
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 block ml-1">
+                      Nama Pewawancara (Tulis Nama Anda)
+                    </label>
+                    <input 
+                      type="text"
+                      placeholder="Masukkan nama lengkap Anda..."
+                      value={interviewerNameInput}
+                      onChange={(e) => setInterviewerNameInput(e.target.value)}
+                      className="w-full h-12 px-4 rounded-xl border border-slate-100 focus:border-emerald-500 outline-none transition-all font-bold text-slate-800 bg-white"
+                    />
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Textarea 
                       label="1. Observasi Umum" 
@@ -283,13 +302,13 @@ export default function CandidateDetailClient({
                       ))}
                     </div>
                   </div>
-                  <Button 
-                    onClick={() => setShowConfirm(true)} 
-                    className="w-full h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]" 
-                    disabled={!observation || !academicAssessment || !familySupport || !characterNotes || !recommendation}
-                  >
-                    <Send className="h-5 w-5 mr-2" /> Simpan & Kunci Catatan Observasi
-                  </Button>
+                    <Button 
+                      onClick={() => setShowConfirm(true)} 
+                      className="w-full h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]" 
+                      disabled={!interviewerNameInput || !observation || !academicAssessment || !familySupport || !characterNotes || !recommendation}
+                    >
+                      <Send className="h-5 w-5 mr-2" /> Simpan & Kunci Catatan Observasi
+                    </Button>
                 </div>
               )}
             </CardContent>
@@ -342,9 +361,9 @@ export default function CandidateDetailClient({
                         <div className="grid gap-4">
                           {formEntries.filter((e: any) => e.question.category === "SISWA").map((entry: any) => (
                             <div key={entry.id} className="bg-slate-50/50 p-5 rounded-[24px] border border-slate-100 shadow-sm">
-                              <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                <div className="w-1 h-1 bg-blue-500 rounded-full" /> {entry.question.text}
-                              </p>
+                            <div className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                              <div className="w-1 h-1 bg-blue-500 rounded-full" /> {entry.question.text}
+                            </div>
                               <p className="text-sm text-slate-700 leading-relaxed font-semibold">{entry.answer || entry.value || "Tidak diisi"}</p>
                             </div>
                           ))}

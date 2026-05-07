@@ -19,17 +19,20 @@ export async function generateCandidateSummary(
 Tugas: Buat ringkasan evaluasi SINGKAT & PADAT untuk calon siswa ${level} bernama ${candidateName}.
 Gaya: Profesional, langsung ke poin utama, tanpa basa-basi pembuka/penutup.
 
-${level === "SMP" ? "Analisis keselarasan antara jawaban ORANG TUA dan SISWA." : "Analisis jawaban ORANG TUA."}
+${level === "SMP" 
+  ? "SANGAT PENTING: Bandingkan jawaban ORANG TUA dan jawaban SISWA. Cari apakah ada ketidaksamaan informasi (kontradiksi) atau apakah mereka sangat selaras." 
+  : "Analisis jawaban ORANG TUA untuk melihat keseriusan dan profil keluarga."}
 
 Data Jawaban:
 ${formattedAnswers}
 
-Format Output:
+Format Output (WAJIB ADA):
 - **Analisis Utama**: (1-2 kalimat inti)
+- **Persentase Keselarasan**: [X]% (Hanya untuk SMP: Bandingkan kejujuran/kecocokan jawaban orang tua vs siswa. Untuk SD: Berikan skor reliabilitas jawaban)
 - **Kekuatan**: (Poin-poin singkat)
 - **Red Flags/Perhatian**: (Poin-poin singkat)
-- **Tanya Saat Wawancara**: (1-2 pertanyaan kunci)
-- **Skor Kesesuaian**: [X]/10 (Berikan alasan singkat)
+- **Tanya Saat Wawancara**: (1-2 pertanyaan kunci untuk mengonfirmasi data yang meragukan)
+- **Skor Kesesuaian**: [X]/10 (Seberapa cocok calon ini dengan kriteria Al Fakhir)
   `.trim()
 
   const result = await model.generateContent(prompt)

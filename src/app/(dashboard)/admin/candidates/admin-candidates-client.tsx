@@ -30,6 +30,8 @@ interface Candidate {
   createdAt: Date
   room?: string
   selectedInterviewer?: string | null
+  parentPhone?: string | null
+  correctedName?: string | null
 }
 
 interface Props {
@@ -79,7 +81,7 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
       }
     }
 
-    const interval = setInterval(poll, 30000) // Poll every 30s
+    const interval = setInterval(poll, 10000) // Poll every 10s
     return () => clearInterval(interval)
   }, [])
 
@@ -142,25 +144,6 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
           >
             <Download size={16} className="mr-2" />
             Ekspor CSV
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={async () => {
-              const testData = [
-                { name: "Ahmad Zaki", level: "SD", room: "R.01" },
-                { name: "Siti Aminah", level: "SD", room: "R.02" },
-                { name: "Budi Santoso", level: "SMP", room: "R.03" },
-                { name: "Dewi Lestari", level: "SMP", room: "R.04" },
-                { name: "Eko Prasetyo", level: "SMP", room: "R.01" },
-              ]
-              for (const data of testData) {
-                await addCandidate(data)
-              }
-              alert("5 Siswa test berhasil ditambahkan!")
-            }}
-            className="h-10 border-slate-200 bg-white text-slate-600 rounded-xl px-4 text-[13px] font-semibold hover:bg-slate-50 transition-all"
-          >
-            Seed 5 Siswa
           </Button>
           <Button 
             onClick={() => setIsAddingCandidate(true)}
@@ -242,8 +225,16 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
                   >
                     <td className={tdCenterStyle}>{(page - 1) * ITEMS_PER_PAGE + i + 1}</td>
                     <td className="px-4 py-3.5">
-                      <div className="font-bold text-[13px] text-[#0F172A] group-hover:text-primary transition-colors">{c.name}</div>
-                      <div className="text-[11px] text-[#94A3B8] mt-0.5">{c.email || "No email"}</div>
+                      <div className="font-bold text-[13px] text-[#0F172A] group-hover:text-primary transition-colors">
+                        {c.correctedName || c.name}
+                      </div>
+                      <div className="text-[11px] text-[#94A3B8] mt-0.5 font-black uppercase tracking-widest">
+                        {c.parentPhone ? (
+                          <span className="text-emerald-600">📱 {c.parentPhone}</span>
+                        ) : (
+                          "Belum Ada No. HP"
+                        )}
+                      </div>
                     </td>
                     <td className={tdCenterStyle}>
                       <span className={cn(
