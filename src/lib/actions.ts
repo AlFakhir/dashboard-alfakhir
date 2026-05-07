@@ -1,9 +1,18 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
-import { revalidatePath } from "next/cache"
 import { Level } from "@prisma/client"
 import { getAcademicYear } from "@/lib/utils"
+
+// Helper for revalidation to avoid top-level next/cache import in client bundle
+async function triggerRevalidate(path: string) {
+  try {
+    const { revalidatePath } = await import("next/cache")
+    revalidatePath(path)
+  } catch (e) {
+    // This might happen in client context during bundling, ignore
+  }
+}
 
 export async function addCandidate(data: { name: string; level: string; room?: string; selectedInterviewer?: string }) {
   try {
@@ -18,8 +27,8 @@ export async function addCandidate(data: { name: string; level: string; room?: s
         academicYear: getAcademicYear()
       },
     })
-    revalidatePath("/admin/candidates")
-    revalidatePath("/admin/admin")
+    await triggerRevalidate("/admin/candidates")
+    await triggerRevalidate("/admin/admin")
     return { success: true }
   } catch (error) {
     console.error("Failed to add candidate:", error)
@@ -30,7 +39,7 @@ export async function addCandidate(data: { name: string; level: string; room?: s
 export async function deleteCandidate(id: string) {
   try {
     await prisma.candidate.delete({ where: { id } })
-    revalidatePath("/admin/candidates")
+    await triggerRevalidate("/admin/candidates")
     return { success: true }
   } catch (error) {
     return { success: false, error: "Gagal menghapus kandidat" }
@@ -41,7 +50,7 @@ export async function syncQuestions(questions: any[]) {
   try {
     // This is handled by the API route currently, but we could do it here too
     // For now, let's just make it a revalidation trigger
-    revalidatePath("/admin/questions")
+    await triggerRevalidate("/admin/questions")
     return { success: true }
   } catch (error) {
     return { success: false }
@@ -55,7 +64,7 @@ export async function updateCandidateInterviewer(id: string, interviewer: string
       where: { id },
       data: { selectedInterviewer: interviewer },
     })
-    revalidatePath("/admin/candidates")
+    await triggerRevalidate("/admin/candidates")
     return { success: true }
   } catch (error) {
     return { success: false }
@@ -67,8 +76,8 @@ export async function updateCandidateRoom(id: string, room: string) {
       where: { id },
       data: { room: room || null },
     })
-    revalidatePath("/admin/candidates")
-    revalidatePath("/admin/admin")
+    await triggerRevalidate("/admin/candidates")
+    await triggerRevalidate("/admin/admin")
     return { success: true }
   } catch (error) {
     console.error("Failed to update candidate room:", error)
@@ -87,7 +96,7 @@ export async function addQuestion(data: { text: string; category: string; level:
         options: data.options ? JSON.stringify(data.options) : null
       } 
     })
-    revalidatePath("/admin/questions")
+    await triggerRevalidate("/admin/questions")
     return { success: true }
   } catch (error) {
     console.error("Add question error:", error)
@@ -104,7 +113,7 @@ export async function updateQuestion(id: string, data: { text?: string; category
         options: data.options ? JSON.stringify(data.options) : undefined
       } 
     })
-    revalidatePath("/admin/questions")
+    await triggerRevalidate("/admin/questions")
     return { success: true }
   } catch (error) {
     console.error("Update question error:", error)
@@ -121,7 +130,7 @@ export async function deleteQuestion(id: string) {
     }
     
     await prisma.formQuestion.delete({ where: { id } })
-    revalidatePath("/admin/questions")
+    await triggerRevalidate("/admin/questions")
     return { success: true }
   } catch (error) {
     return { success: false }
@@ -131,7 +140,7 @@ export async function deleteQuestion(id: string) {
 export async function updateCandidate(id: string, data: { name?: string; level?: Level }) {
   try {
     await prisma.candidate.update({ where: { id }, data })
-    revalidatePath("/admin/candidates")
+    await triggerRevalidate("/admin/candidates")
     return { success: true }
   } catch (error) {
     return { success: false }
@@ -144,8 +153,8 @@ export async function updateCandidateStatus(id: string, status: any) {
       where: { id },
       data: { status },
     })
-    revalidatePath("/admin/candidates")
-    revalidatePath("/admin/admin")
+    await triggerRevalidate("/admin/candidates")
+    await triggerRevalidate("/admin/admin")
     return { success: true }
   } catch (error) {
     return { success: false }

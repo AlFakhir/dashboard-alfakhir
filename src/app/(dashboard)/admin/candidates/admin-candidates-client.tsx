@@ -237,12 +237,19 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
                       </div>
                     </td>
                     <td className={tdCenterStyle}>
-                      <span className={cn(
-                        "px-2.5 py-0.5 rounded-full text-[11px] font-bold",
-                        c.level === "SD" ? "bg-sd-light text-sd" : "bg-smp-light text-smp"
-                      )}>
-                        {c.level}
-                      </span>
+                      <select 
+                        defaultValue={c.level}
+                        onChange={async (e) => {
+                          await updateCandidate(c.id, { level: e.target.value as any })
+                        }}
+                        className={cn(
+                          "w-full bg-slate-50 border border-[#E2E8F0] rounded-lg px-2 py-1 text-[11px] font-bold outline-none focus:border-primary transition-all cursor-pointer",
+                          c.level === "SD" ? "text-sd" : "text-smp"
+                        )}
+                      >
+                        <option value="SD">SD</option>
+                        <option value="SMP">SMP</option>
+                      </select>
                     </td>
                     <td className={tdCenterStyle}>
                       <select 
@@ -305,8 +312,12 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
                         <button 
                           onClick={async () => {
                             if (confirm(`Hapus kandidat ${c.name}?`)) {
-                              await deleteCandidate(c.id)
-                              router.refresh()
+                              const res = await deleteCandidate(c.id)
+                              if (res.success) {
+                                setCandidates(prev => prev.filter(cand => cand.id !== c.id))
+                              } else {
+                                alert(res.error || "Gagal menghapus")
+                              }
                             }
                           }}
                           className="w-8 h-8 rounded-lg border border-[#FEE2E2] bg-white flex items-center justify-center text-[#EF4444] hover:bg-[#FEE2E2] transition-all"
