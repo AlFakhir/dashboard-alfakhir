@@ -20,8 +20,8 @@ export default async function PublicFormPage({ params, searchParams }: Props) {
 
   if (!candidate) return notFound()
 
-  // 1.5. Cek apakah sudah pernah mengirim data
-  if (candidate.status !== "PENDING") {
+  // 1.5. Cek apakah sudah dikunci secara manual oleh admin
+  if (candidate.status === "REVIEWED" || candidate.status === "COMPLETED") {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 text-center">
         <div className="max-w-md space-y-6 animate-in zoom-in duration-500">
@@ -30,15 +30,46 @@ export default async function PublicFormPage({ params, searchParams }: Props) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 uppercase italic">Akses Terbatas</h1>
+          <h1 className="text-2xl font-black text-slate-900 uppercase italic">Akses Terkunci</h1>
           <p className="text-slate-500 font-medium">
-            Data observasi untuk <span className="font-bold text-slate-900">{candidate.name}</span> sudah terkirim sebelumnya.
+            Proses observasi untuk <span className="font-bold text-slate-900">{candidate.name}</span> telah dinyatakan selesai atau sedang dalam tinjauan Admin.
           </p>
-          <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm">
-            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
-              Jika Anda perlu melakukan perubahan, silakan hubungi Administrator atau Pewawancara Anda untuk meminta izin pembukaan akses kembali.
-            </p>
+        </div>
+      </div>
+    )
+  }
+
+  // 1.6. Cek apakah role ini sudah pernah mengisi
+  const { id } = await params
+  const { role } = await searchParams
+  const isStudentRole = role === "student" && candidate.level === "SMP"
+  const categoryToCheck = isStudentRole ? "SISWA" : "ORANG TUA"
+
+  const existingAnswersCount = await prisma.formAnswer.count({
+    where: {
+      candidateId: id,
+      question: {
+        category: categoryToCheck
+      }
+    }
+  })
+
+  if (existingAnswersCount > 0) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 text-center">
+        <div className="max-w-md space-y-6 animate-in zoom-in duration-500">
+          <div className="h-24 w-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
+            <svg className="h-12 w-12 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
           </div>
+          <h1 className="text-2xl font-black text-slate-900 uppercase italic">Terima Kasih</h1>
+          <p className="text-slate-500 font-medium">
+            Formulir untuk <span className="font-bold text-slate-900">{isStudentRole ? "Calon Siswa" : "Orang Tua"}</span> sudah berhasil kami terima sebelumnya.
+          </p>
+          <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+            Data Anda telah tersimpan dengan aman di sistem kami.
+          </p>
         </div>
       </div>
     )

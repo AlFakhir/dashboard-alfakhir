@@ -20,9 +20,16 @@ export async function POST(req: Request) {
     }))
 
     await prisma.$transaction(async (tx) => {
-      // Hapus jawaban lama jika ada (untuk menghindari duplikasi jika isi ulang)
+      // Hapus hanya jawaban untuk kategori yang sedang diisi (agar tidak menimpa peran lain)
+      const categoryToClear = role === "student" ? "SISWA" : "ORANG TUA"
+
       await (tx as any).formAnswer.deleteMany({
-        where: { candidateId },
+        where: { 
+          candidateId,
+          question: {
+            category: categoryToClear
+          }
+        },
       })
 
       // Simpan jawaban baru
