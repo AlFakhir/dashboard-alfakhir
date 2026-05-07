@@ -5,13 +5,22 @@ export default async function FormPortalPage() {
 
   const candidates = await prisma.candidate.findMany({
     where: {
-      status: "PENDING"
+      status: { in: ["PENDING", "RESPONSE_RECEIVED"] }
     },
     select: {
       id: true,
       name: true,
       level: true,
-      room: true
+      room: true,
+      formAnswers: {
+        select: {
+          question: {
+            select: {
+              category: true
+            }
+          }
+        }
+      }
     }
   })
 

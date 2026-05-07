@@ -233,26 +233,62 @@ export default function CandidateDetailClient({
                 </div>
               ) : (
                 <div className="space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Textarea label="Observasi Umum" placeholder="Catatan umum..." value={observation} onChange={(e) => setObservation(e.target.value)} />
-                    <Textarea label="Kesiapan Akademik" placeholder="Penilaian akademik..." value={academicAssessment} onChange={(e) => setAcademicAssessment(e.target.value)} />
-                    <Textarea label="Dukungan Keluarga" placeholder="Penilaian keluarga..." value={familySupport} onChange={(e) => setFamilySupport(e.target.value)} />
-                    <Textarea label="Karakter & Sikap" placeholder="Catatan karakter..." value={characterNotes} onChange={(e) => setCharacterNotes(e.target.value)} />
-                    <Textarea label="Catatan Lainnya" placeholder="Catatan tambahan lainnya..." value={otherNotes} onChange={(e) => setOtherNotes(e.target.value)} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Textarea 
+                      label="1. Observasi Umum" 
+                      placeholder="Apa yang Anda amati selama proses berlangsung?..." 
+                      value={observation} 
+                      onChange={(e) => setObservation(e.target.value)} 
+                      className="min-h-[120px]"
+                    />
+                    <Textarea 
+                      label="2. Kesiapan Akademik" 
+                      placeholder="Bagaimana kemampuan dasar akademik anak?..." 
+                      value={academicAssessment} 
+                      onChange={(e) => setAcademicAssessment(e.target.value)} 
+                      className="min-h-[120px]"
+                    />
+                    <Textarea 
+                      label="3. Dukungan Keluarga" 
+                      placeholder="Bagaimana keterlibatan orang tua dalam pendidikan?..." 
+                      value={familySupport} 
+                      onChange={(e) => setFamilySupport(e.target.value)} 
+                      className="min-h-[120px]"
+                    />
+                    <Textarea 
+                      label="4. Karakter & Sikap" 
+                      placeholder="Bagaimana etika dan kemandirian anak?..." 
+                      value={characterNotes} 
+                      onChange={(e) => setCharacterNotes(e.target.value)} 
+                      className="min-h-[120px]"
+                    />
+                    <div className="md:col-span-2">
+                      <Textarea 
+                        label="5. Catatan Tambahan (Opsional)" 
+                        placeholder="Catatan lain yang perlu diketahui tim manajemen..." 
+                        value={otherNotes} 
+                        onChange={(e) => setOtherNotes(e.target.value)} 
+                        className="min-h-[80px]"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-700 mb-3">Rekomendasi Final</p>
-                    <div className="flex flex-wrap gap-3">
+                  <div className="pt-4 border-t border-slate-100">
+                    <p className="text-sm font-bold text-slate-900 uppercase tracking-tight mb-4">Kesimpulan & Rekomendasi</p>
+                    <div className="flex flex-wrap gap-4">
                       {RECOMMENDATION_OPTIONS.map((opt) => (
-                        <label key={opt.value} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 cursor-pointer transition-all ${recommendation === opt.value ? (opt.value === "Terima" ? "border-emerald-400 bg-emerald-50" : opt.value === "Tolak" ? "border-rose-400 bg-rose-50" : "border-amber-400 bg-amber-50") : "border-slate-200 bg-white hover:border-slate-300"}`}>
+                        <label key={opt.value} className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 px-4 py-4 rounded-2xl border-2 cursor-pointer transition-all ${recommendation === opt.value ? (opt.value === "Terima" ? "border-emerald-500 bg-emerald-50 ring-4 ring-emerald-500/10" : opt.value === "Tolak" ? "border-rose-500 bg-rose-50 ring-4 ring-rose-500/10" : "border-amber-500 bg-amber-50 ring-4 ring-amber-500/10") : "border-slate-100 bg-white hover:border-slate-200"}`}>
                           <input type="radio" name="recommendation" value={opt.value} checked={recommendation === opt.value} onChange={() => setRecommendation(opt.value)} className="sr-only" />
-                          <span className="text-sm font-semibold">{opt.label}</span>
+                          <span className={`text-sm font-bold ${recommendation === opt.value ? (opt.value === "Terima" ? "text-emerald-700" : opt.value === "Tolak" ? "text-rose-700" : "text-amber-700") : "text-slate-500"}`}>{opt.label}</span>
                         </label>
                       ))}
                     </div>
                   </div>
-                  <Button onClick={() => setShowConfirm(true)} className="w-full h-12 rounded-xl" disabled={!observation || !academicAssessment || !familySupport || !characterNotes || !recommendation}>
-                    <Send className="h-4 w-4" /> Kirim & Kunci Catatan
+                  <Button 
+                    onClick={() => setShowConfirm(true)} 
+                    className="w-full h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]" 
+                    disabled={!observation || !academicAssessment || !familySupport || !characterNotes || !recommendation}
+                  >
+                    <Send className="h-5 w-5 mr-2" /> Simpan & Kunci Catatan Observasi
                   </Button>
                 </div>
               )}
@@ -296,29 +332,30 @@ export default function CandidateDetailClient({
                       </div>
                     </div>
 
-                    <div className="space-y-4 pt-6 border-t border-slate-100">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-[13px] font-black text-slate-900 flex items-center gap-2 uppercase tracking-tight">
-                          <div className="w-1.5 h-4 bg-blue-500 rounded-full" /> Wawancara Calon Siswa
-                        </h3>
-                        {(candidate as any).studentEmail && (
-                          <Badge variant="muted" className="text-[10px] border-blue-100 text-blue-600 bg-blue-50/30">
-                            Email: {(candidate as any).studentEmail}
-                          </Badge>
-                        )}
+                    {candidate.level === "SMP" && (
+                      <div className="space-y-4 pt-6 border-t border-slate-100">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-[13px] font-black text-slate-900 flex items-center gap-2 uppercase tracking-tight">
+                            <div className="w-1.5 h-4 bg-blue-500 rounded-full" /> Wawancara Calon Siswa
+                          </h3>
+                        </div>
+                        <div className="grid gap-4">
+                          {formEntries.filter((e: any) => e.question.category === "SISWA").map((entry: any) => (
+                            <div key={entry.id} className="bg-slate-50/50 p-5 rounded-[24px] border border-slate-100 shadow-sm">
+                              <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <div className="w-1 h-1 bg-blue-500 rounded-full" /> {entry.question.text}
+                              </p>
+                              <p className="text-sm text-slate-700 leading-relaxed font-semibold">{entry.answer || entry.value || "Tidak diisi"}</p>
+                            </div>
+                          ))}
+                          {formEntries.filter((e: any) => e.question.category === "SISWA").length === 0 && (
+                            <div className="py-8 text-center bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200">
+                              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Siswa belum mengisi formulir wawancara.</p>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="grid gap-4">
-                        {formEntries.filter((e: any) => e.question.category === "SISWA").map((entry: any) => (
-                          <div key={entry.id} className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{entry.question.text}</p>
-                            <p className="text-sm text-slate-700 leading-relaxed font-medium">{entry.answer || entry.value || "Tidak diisi"}</p>
-                          </div>
-                        ))}
-                        {formEntries.filter((e: any) => e.question.category === "SISWA").length === 0 && (
-                          <p className="text-xs text-slate-400 italic">Belum ada data wawancara siswa.</p>
-                        )}
-                      </div>
-                    </div>
+                    )}
                 </div>
               )}
             </CardContent>

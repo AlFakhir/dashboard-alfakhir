@@ -6,10 +6,10 @@ import { revalidatePath } from "next/cache"
 
 const NoteSchema = z.object({
   candidateId: z.string(),
-  observation: z.string().min(10, "Observasi minimal 10 karakter"),
-  academicAssessment: z.string().min(10, "Kesiapan akademik minimal 10 karakter"),
-  familySupport: z.string().min(10, "Dukungan keluarga minimal 10 karakter"),
-  characterNotes: z.string().min(10, "Catatan karakter minimal 10 karakter"),
+  observation: z.string().min(1, "Catatan observasi wajib diisi"),
+  academicAssessment: z.string().min(1, "Penilaian akademik wajib diisi"),
+  familySupport: z.string().min(1, "Catatan keluarga wajib diisi"),
+  characterNotes: z.string().min(1, "Catatan karakter wajib diisi"),
   otherNotes: z.string().optional(),
   recommendation: z.enum(["Terima", "Pertimbangkan", "Tolak"]),
   aiSummary: z.string().optional(),

@@ -12,6 +12,11 @@ interface Candidate {
   name: string
   level: string
   room: string | null
+  formAnswers?: {
+    question: {
+      category: string
+    }
+  }[]
 }
 
 interface Props {
@@ -30,6 +35,18 @@ export default function FormPortalClient({ candidates }: Props) {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  const selectedCandidate = useMemo(() => {
+    return candidates.find(c => c.id === selectedId)
+  }, [candidates, selectedId])
+
+  const parentSubmitted = useMemo(() => {
+    return selectedCandidate?.formAnswers?.some(a => a.question.category === "ORANG TUA")
+  }, [selectedCandidate])
+
+  const studentSubmitted = useMemo(() => {
+    return selectedCandidate?.formAnswers?.some(a => a.question.category === "SISWA")
+  }, [selectedCandidate])
 
   const filteredCandidates = useMemo(() => {
     return candidates.filter(c => c.level === level && c.room === room)
@@ -242,33 +259,45 @@ export default function FormPortalClient({ candidates }: Props) {
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Siapa yang mengisi?</label>
               <div className="grid grid-cols-1 gap-4">
                 <button
-                  onClick={() => setRole("parent")}
+                  onClick={() => !parentSubmitted && setRole("parent")}
+                  disabled={parentSubmitted}
                   className={cn(
-                    "p-6 rounded-[28px] border-2 text-center transition-all flex flex-col items-center gap-2 group",
-                    role === "parent" 
-                      ? "border-emerald-500 bg-emerald-500 text-white shadow-2xl shadow-emerald-500/30 -translate-y-1" 
-                      : "border-slate-100 bg-white text-slate-400 hover:border-slate-200"
+                    "p-6 rounded-[28px] border-2 text-center transition-all flex flex-col items-center gap-2 group relative overflow-hidden",
+                    parentSubmitted 
+                      ? "bg-slate-50 border-slate-100 opacity-60 cursor-not-allowed" 
+                      : role === "parent" 
+                        ? "border-emerald-500 bg-emerald-500 text-white shadow-2xl shadow-emerald-500/30 -translate-y-1" 
+                        : "border-slate-100 bg-white text-slate-400 hover:border-slate-200"
                   )}
                 >
-                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-colors", role === "parent" ? "bg-white/20" : "bg-emerald-50 text-emerald-500")}>
+                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-colors", parentSubmitted ? "bg-slate-200 text-slate-400" : role === "parent" ? "bg-white/20" : "bg-emerald-50 text-emerald-500")}>
                     <Users className="h-6 w-6" />
                   </div>
-                  <span className="font-black italic uppercase tracking-tight">Orang Tua Calon Siswa</span>
+                  <div className="flex flex-col">
+                    <span className={cn("font-black italic uppercase tracking-tight", parentSubmitted ? "text-slate-400" : "")}>Orang Tua Calon Siswa</span>
+                    {parentSubmitted && <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600 mt-1">✓ Sudah Mengisi</span>}
+                  </div>
                 </button>
                 {level === "SMP" && (
                   <button
-                    onClick={() => setRole("student")}
+                    onClick={() => !studentSubmitted && setRole("student")}
+                    disabled={studentSubmitted}
                     className={cn(
-                      "p-6 rounded-[28px] border-2 text-center transition-all flex flex-col items-center gap-2 group",
-                      role === "student" 
-                        ? "border-blue-500 bg-blue-500 text-white shadow-2xl shadow-blue-500/30 -translate-y-1" 
-                        : "border-slate-100 bg-white text-slate-400 hover:border-slate-200"
+                      "p-6 rounded-[28px] border-2 text-center transition-all flex flex-col items-center gap-2 group relative overflow-hidden",
+                      studentSubmitted 
+                        ? "bg-slate-50 border-slate-100 opacity-60 cursor-not-allowed" 
+                        : role === "student" 
+                          ? "border-blue-500 bg-blue-500 text-white shadow-2xl shadow-blue-500/30 -translate-y-1" 
+                          : "border-slate-100 bg-white text-slate-400 hover:border-slate-200"
                     )}
                   >
-                    <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-colors", role === "student" ? "bg-white/20" : "bg-blue-50 text-blue-500")}>
+                    <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-colors", studentSubmitted ? "bg-slate-200 text-slate-400" : role === "student" ? "bg-white/20" : "bg-blue-50 text-blue-500")}>
                       <GraduationCap className="h-6 w-6" />
                     </div>
-                    <span className="font-black italic uppercase tracking-tight">Calon Siswa Sendiri</span>
+                    <div className="flex flex-col">
+                      <span className={cn("font-black italic uppercase tracking-tight", studentSubmitted ? "text-slate-400" : "")}>Calon Siswa Sendiri</span>
+                      {studentSubmitted && <span className="text-[9px] font-black uppercase tracking-widest text-blue-600 mt-1">✓ Sudah Mengisi</span>}
+                    </div>
                   </button>
                 )}
               </div>
@@ -280,7 +309,13 @@ export default function FormPortalClient({ candidates }: Props) {
               </Button>
               <Button 
                 style={{ flex: 2 }}
-                className="h-14 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-black italic shadow-xl shadow-emerald-500/20 flex items-center justify-center"
+                className={cn(
+                  "h-14 rounded-2xl text-white font-black italic shadow-xl flex items-center justify-center",
+                  (role === "parent" && parentSubmitted) || (role === "student" && studentSubmitted)
+                    ? "bg-slate-200 cursor-not-allowed"
+                    : "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20"
+                )}
+                disabled={(role === "parent" && parentSubmitted) || (role === "student" && studentSubmitted)}
                 onClick={handleStart}
               >
                 MULAI OBSERVASI <ArrowRight className="ml-2 h-5 w-5" />

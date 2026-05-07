@@ -16,41 +16,20 @@ export async function generateCandidateSummary(
     .join("\n")
 
   const prompt = `
-Kamu adalah asisten evaluasi penerimaan siswa baru yang berpengalaman untuk sekolah Islam Modern Al Fakhir.
-Jenjang kandidat: ${level}
-Nama kandidat: ${candidateName}
+Tugas: Buat ringkasan evaluasi SINGKAT & PADAT untuk calon siswa ${level} bernama ${candidateName}.
+Gaya: Profesional, langsung ke poin utama, tanpa basa-basi pembuka/penutup.
 
-${level === "SMP" ? 
-`PENTING: Untuk jenjang SMP, data mencakup jawaban dari ORANG TUA dan CALON SISWA. 
-Tugasmu adalah menganalisis kedua perspektif tersebut, melihat keselarasan antara harapan orang tua dan motivasi siswa.` : 
-`Data ini berisi jawaban dari ORANG TUA siswa.`
-}
+${level === "SMP" ? "Analisis keselarasan antara jawaban ORANG TUA dan SISWA." : "Analisis jawaban ORANG TUA."}
 
-Berikut adalah data jawaban formulir observasi:
----
+Data Jawaban:
 ${formattedAnswers}
----
 
-Buatlah ringkasan evaluasi yang komprehensif dalam Bahasa Indonesia dengan format berikut:
-
-## Ringkasan Keseluruhan
-[Analisis profil kandidat. Jika SMP, soroti bagaimana dinamika antara jawaban anak dan orang tua.]
-
-## Kekuatan Utama
-- [Kekuatan karakter/akademik berdasarkan data]
-
-## Analisis Kesesuaian (SMP Only)
-[Hanya jika SMP: Analisis apakah motivasi siswa selaras dengan harapan orang tua dan visi sekolah.]
-
-## Hal yang Perlu Diperhatikan
-- [Potensi kendala atau area yang perlu dikonfirmasi saat wawancara]
-
-## Rekomendasi Pertanyaan Wawancara
-[Daftar pertanyaan tajam untuk menggali lebih dalam saat tatap muka]
-
-## Skor Kesesuaian
-**Skor: [X]/10**
-*Alasan: [Penjelasan singkat]*
+Format Output:
+- **Analisis Utama**: (1-2 kalimat inti)
+- **Kekuatan**: (Poin-poin singkat)
+- **Red Flags/Perhatian**: (Poin-poin singkat)
+- **Tanya Saat Wawancara**: (1-2 pertanyaan kunci)
+- **Skor Kesesuaian**: [X]/10 (Berikan alasan singkat)
   `.trim()
 
   const result = await model.generateContent(prompt)
