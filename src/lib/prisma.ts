@@ -8,22 +8,24 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 const createPrismaClient = () => {
-  const connectionString = process.env.DATABASE_URL
-  
-  // Jika di lokal (development) dan port 5432 mungkin diblokir, gunakan Neon Adapter
-  if (process.env.NODE_ENV === "development" && connectionString?.includes("neon.tech")) {
+  const connectionString = process.env.DATABASE_URL || ""
+  const isLocalNeon = process.env.NODE_ENV === "development" && connectionString.includes("neon.tech")
+
+  // JIKA DI LOKAL (KALI LINUX)
+  if (isLocalNeon) {
     neonConfig.webSocketConstructor = ws
     const pool = new Pool({ connectionString })
-    const adapter = new PrismaNeon(pool)
+    const adapter = new PrismaNeon(pool as any)
+    
     return new PrismaClient({
-      adapter,
+      adapter: adapter as any,
       log: ["error", "warn"],
     })
   }
 
-  // Jika di Vercel atau environment lain, gunakan driver standar (lebih stabil)
+  // JIKA DI VERCEL / PRODUKSI (Gunakan driver standar)
   return new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    log: ["error"],
   })
 }
 
