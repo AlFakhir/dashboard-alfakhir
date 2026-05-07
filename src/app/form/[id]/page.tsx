@@ -2,8 +2,6 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import PublicFormClient from "./form-client"
 
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
 
 interface Props {
   params: { id: string }
@@ -11,12 +9,6 @@ interface Props {
 }
 
 export default async function PublicFormPage({ params, searchParams }: Props) {
-  const session = await auth()
-  if (!session) {
-    const { id } = await params
-    const { role } = await searchParams
-    redirect(`/login?callbackUrl=/form/${id}${role ? `?role=${role}` : ""}`)
-  }
 
   const { id } = await params
   const { role } = await searchParams

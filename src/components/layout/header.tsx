@@ -153,23 +153,32 @@ export function Header({ session, isPortal }: HeaderProps) {
         <SignOutButton />
 
         {/* Global QR Dialog */}
-        <Dialog open={showQR} onOpenChange={setShowQR}>
-          <DialogContent className="max-w-sm rounded-[32px] p-10 bg-white overflow-hidden text-center border-none shadow-2xl">
-            <DialogTitle className="text-[20px] font-black text-slate-900 uppercase tracking-tighter italic mb-8">
-              Portal Observasi Mandiri
-            </DialogTitle>
-            <div className="bg-white p-6 rounded-[40px] border-4 border-slate-50 shadow-2xl shadow-slate-200/50 mb-8 flex items-center justify-center mx-auto w-fit">
-              <QRCodeSVG value="https://dashboard-alfakhir.vercel.app/form" size={220} level="H" />
+        <Dialog open={showQR} onOpenChange={setShowQR} className="max-w-sm rounded-[32px] shadow-2xl">
+          <DialogContent className="p-10 text-center border-none">
+            <div className="flex flex-col items-center justify-center text-center">
+              <DialogTitle className="text-[20px] font-black text-slate-900 uppercase tracking-tighter italic mb-8 w-full">
+                Portal Observasi Mandiri
+              </DialogTitle>
+              
+              <div className="bg-white p-6 rounded-[40px] border-4 border-slate-50 shadow-2xl shadow-slate-200/50 mb-8 flex items-center justify-center mx-auto w-fit">
+                <QRCodeSVG 
+                  value="https://dashboard-alfakhir.vercel.app/form" 
+                  size={220}
+                  level="H"
+                />
+              </div>
+              
+              <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed mb-10 max-w-[280px] mx-auto">
+                Satu QR untuk semua.<br/>Scan untuk memilih unit, ruangan, dan nama siswa.
+              </p>
+
+              <Button 
+                className="w-full bg-slate-900 hover:bg-black text-white font-black italic h-14 rounded-2xl shadow-xl transition-all"
+                onClick={() => setShowQR(false)}
+              >
+                Tutup Dashboard QR
+              </Button>
             </div>
-            <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed mb-10">
-              Satu QR untuk semua.<br/>Scan untuk memilih unit, ruangan, dan nama siswa.
-            </p>
-            <Button 
-              className="w-full bg-slate-900 hover:bg-black text-white font-black italic h-14 rounded-2xl shadow-xl transition-all"
-              onClick={() => setShowQR(false)}
-            >
-              Tutup Dashboard QR
-            </Button>
           </DialogContent>
         </Dialog>
       </div>
@@ -291,33 +300,6 @@ export function Header({ session, isPortal }: HeaderProps) {
         </button>
       </div>
 
-      {/* GLOBAL QR DIALOG */}
-      <Dialog open={showQR} onOpenChange={setShowQR}>
-        <DialogContent className="max-w-sm rounded-[32px] p-10 bg-white overflow-hidden text-center border-none shadow-2xl">
-          <DialogTitle className="text-[20px] font-black text-slate-900 uppercase tracking-tighter italic mb-8">
-            Portal Observasi Mandiri
-          </DialogTitle>
-          
-          <div className="bg-white p-6 rounded-[40px] border-4 border-slate-50 shadow-2xl shadow-slate-200/50 mb-8 flex items-center justify-center mx-auto w-fit">
-            <QRCodeSVG 
-              value="https://dashboard-alfakhir.vercel.app/form" 
-              size={220}
-              level="H"
-            />
-          </div>
-          
-          <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed mb-10">
-            Satu QR untuk semua.<br/>Scan untuk memilih unit, ruangan, dan nama siswa.
-          </p>
-
-          <Button 
-            className="w-full bg-slate-900 hover:bg-black text-white font-black italic h-14 rounded-2xl shadow-xl transition-all"
-            onClick={() => setShowQR(false)}
-          >
-            Tutup Dashboard QR
-          </Button>
-        </DialogContent>
-      </Dialog>
     </header>
   )
 }

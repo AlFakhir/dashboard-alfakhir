@@ -1,13 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import FormPortalClient from "./form-portal-client"
-import { auth } from "@/lib/auth"
-import { redirect } from "next/navigation"
 
 export default async function FormPortalPage() {
-  const session = await auth()
-  if (!session) {
-    redirect("/login?callbackUrl=/form")
-  }
 
   const candidates = await prisma.candidate.findMany({
     where: {
