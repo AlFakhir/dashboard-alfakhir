@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { signOut } from "next-auth/react"
+import { BrandLogo } from "./brand-logo"
 
 interface SidebarProps {
   role: "admin" | "admin_sd" | "admin_smp" | "interviewer"
@@ -98,21 +99,10 @@ export function Sidebar({ role }: SidebarProps) {
 
   return (
     <aside className="w-[220px] h-screen bg-[#0D1B2A] fixed left-0 top-0 bottom-0 flex flex-col z-50 overflow-y-auto custom-scrollbar border-r border-white/5">
-      {/* LOGO SECTION */}
       <div className="p-6 border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-smp to-sd flex items-center justify-center shrink-0 shadow-lg shadow-smp/30">
-            <GraduationCap className="h-6 w-6 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[15px] font-black text-white tracking-tight leading-none uppercase">
-              AL FAKHIR
-            </span>
-            <span className="text-[10px] text-gold font-bold tracking-widest uppercase mt-1">
-              OBSERVASI
-            </span>
-          </div>
-        </div>
+        <Link href="/admin/admin" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <BrandLogo role={role} />
+        </Link>
       </div>
 
       {/* NAV SECTIONS */}

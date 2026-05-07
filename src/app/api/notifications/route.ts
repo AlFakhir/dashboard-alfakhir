@@ -1,7 +1,14 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
 
 export async function GET() {
+  const session = await auth()
+  
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     // Fetch latest 10 activities
     const notes = await prisma.interviewerNote.findMany({
@@ -38,6 +45,7 @@ export async function GET() {
 
     return NextResponse.json(notifications)
   } catch (error) {
+    console.error("API Notifications Error:", error)
     return NextResponse.json({ error: "Failed to fetch notifications" }, { status: 500 })
   }
 }

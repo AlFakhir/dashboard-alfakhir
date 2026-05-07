@@ -46,7 +46,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(buttonVariants({ variant, size, className }))}
-        disabled={disabled || loading}
+        disabled={!!disabled || !!loading}
         {...props}
       >
         {loading && (

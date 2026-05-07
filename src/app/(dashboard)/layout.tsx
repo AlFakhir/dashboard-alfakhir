@@ -5,6 +5,7 @@ import { GraduationCap, LayoutDashboard, Users, HelpCircle, Archive, Monitor } f
 import Link from "next/link"
 import { SignOutButton } from "@/components/auth/sign-out-button"
 import { cn } from "@/lib/utils"
+import { BrandLogo } from "@/components/layout/brand-logo"
 
 export default async function DashboardLayout({
   children,
@@ -23,13 +24,7 @@ export default async function DashboardLayout({
       <nav className="h-[75px] bg-[#0D1B2A] text-white flex items-center justify-between px-8 sticky top-0 z-50 border-b border-white/5">
         <div className="flex items-center gap-8">
           <Link href="/admin/admin" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-gold to-yellow-600 flex items-center justify-center shadow-lg shadow-gold/20">
-              <GraduationCap className="h-6 w-6 text-slate-900" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[14px] font-black tracking-tight leading-none uppercase">AL FAKHIR</span>
-              <span className="text-[9px] text-gold font-bold tracking-[0.3em] uppercase mt-1">PORTAL ADMINISTRATOR</span>
-            </div>
+            <BrandLogo role={role} />
           </Link>
 
           {/* Horizontal Menu */}

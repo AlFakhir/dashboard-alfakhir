@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { GraduationCap, ArrowRight, MapPin, Users, UserCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -20,15 +20,22 @@ interface Props {
 
 export default function FormPortalClient({ candidates }: Props) {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
   const [step, setStep] = useState(1)
   const [level, setLevel] = useState<string | null>(null)
   const [room, setRoom] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [role, setRole] = useState<"parent" | "student">("parent")
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const filteredCandidates = useMemo(() => {
     return candidates.filter(c => c.level === level && c.room === room)
   }, [candidates, level, room])
+
+  if (!mounted) return null
 
   const handleStart = () => {
     if (selectedId) {

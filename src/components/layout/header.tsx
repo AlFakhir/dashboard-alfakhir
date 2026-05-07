@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SignOutButton } from "@/components/auth/sign-out-button"
 import { cn } from "@/lib/utils"
+import { BrandLogo } from "@/components/layout/brand-logo"
 
 interface HeaderProps {
   session: any
@@ -42,12 +43,19 @@ export function Header({ session, isPortal }: HeaderProps) {
     try {
       const res = await fetch("/api/notifications")
       const data = await res.json()
-      if (notifications.length > 0 && data.length > 0 && data[0].id !== notifications[0].id) {
-        setHasNew(true)
+      
+      if (Array.isArray(data)) {
+        setNotifications(prev => {
+          if (prev.length > 0 && data.length > 0 && data[0].id !== prev[0].id) {
+            setHasNew(true)
+          }
+          return data
+        })
+      } else {
+        console.warn("Notifications API returned non-array data:", data)
       }
-      setNotifications(data)
     } catch (error) {
-      console.error("Failed to fetch notifications")
+      console.error("Failed to fetch notifications:", error)
     }
   }
 
@@ -58,7 +66,7 @@ export function Header({ session, isPortal }: HeaderProps) {
     fetchNotifications()
     const interval = setInterval(fetchNotifications, 30000) // Poll every 30s
     return () => clearInterval(interval)
-  }, [notifications])
+  }, [])
 
   if (isPortal) {
     return (
@@ -136,7 +144,7 @@ export function Header({ session, isPortal }: HeaderProps) {
         <div className="flex items-center gap-3">
           <div className="text-right flex flex-col items-end">
             <div className="text-[13px] font-bold text-white leading-tight">
-              {session.user?.name?.replace('SMPI ', '')}
+              {session.user?.name?.replace('SMPI ', '').replace('SD ', '')}
             </div>
             <div className="text-[10px] font-bold text-gold uppercase tracking-widest mt-1 opacity-70">ADMINISTRATOR</div>
           </div>
@@ -265,9 +273,11 @@ export function Header({ session, isPortal }: HeaderProps) {
         {/* User info */}
         <div className="flex items-center gap-3">
           <div className="text-right flex flex-col items-end">
-            <div className="text-[13px] font-bold text-[#0F172A] leading-tight">{name}</div>
+            <div className="text-[13px] font-bold text-[#0F172A] leading-tight">
+              {name.replace('SMPI ', '').replace('SD ', '')}
+            </div>
             <div className="text-[11px] font-medium bg-[#FEF3C7] text-[#92400E] px-2 py-0.5 rounded-full mt-1">
-              {role === "admin" ? "Admin" : "Pewawancara"}
+              {role.includes("admin") ? "Administrator" : "Pewawancara"}
             </div>
           </div>
           <div className="w-9 h-9 rounded-full bg-[#ECFDF5] text-[#065F46] flex items-center justify-center text-[14px] font-bold border-2 border-[#A7F3D0]">
