@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "react-hot-toast"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -66,6 +67,10 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
   const [levelFilter, setLevelFilter] = useState("Semua Jenjang")
   const [origin, setOrigin] = useState("")
   const [role, setRole] = useState("parent")
+  const [targetDelete, setTargetDelete] = useState<Candidate | null>(null)
+  const [targetReset, setTargetReset] = useState<Candidate | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
 
   // Real-time polling
   useEffect(() => {
@@ -298,28 +303,14 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
                           <QrCode size={14} />
                         </button>
                         <button 
-                          onClick={async () => {
-                            if (confirm(`Reset status ${c.name} ke 'Pending'? (Agar bisa mengisi form lagi)`)) {
-                              await updateCandidateStatus(c.id, "PENDING")
-                              router.refresh()
-                            }
-                          }}
+                          onClick={() => setTargetReset(c)}
                           className="w-8 h-8 rounded-lg border border-amber-100 bg-white flex items-center justify-center text-amber-500 hover:bg-amber-50 transition-all"
                           title="Reset Status"
                         >
                           <RefreshCw size={14} />
                         </button>
                         <button 
-                          onClick={async () => {
-                            if (confirm(`Hapus kandidat ${c.name}?`)) {
-                              const res = await deleteCandidate(c.id)
-                              if (res.success) {
-                                setCandidates(prev => prev.filter(cand => cand.id !== c.id))
-                              } else {
-                                alert(res.error || "Gagal menghapus")
-                              }
-                            }
-                          }}
+                          onClick={() => setTargetDelete(c)}
                           className="w-8 h-8 rounded-lg border border-[#FEE2E2] bg-white flex items-center justify-center text-[#EF4444] hover:bg-[#FEE2E2] transition-all"
                           title="Hapus"
                         >
@@ -560,6 +551,90 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!targetDelete} onOpenChange={() => !isDeleting && setTargetDelete(null)}>
+        <DialogContent className="max-w-md rounded-[32px] p-10 bg-white border-none shadow-2xl text-center">
+          <div className="w-20 h-20 bg-rose-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-rose-500">
+            <Trash2 size={40} />
+          </div>
+          <h2 className="text-[24px] font-black text-[#0F172A] uppercase tracking-tighter italic mb-3">Hapus Kandidat?</h2>
+          <p className="text-slate-500 text-[15px] font-medium leading-relaxed mb-10">
+            Anda akan menghapus data <span className="font-bold text-slate-900">{targetDelete?.name}</span> secara permanen. Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <Button 
+              variant="outline" 
+              className="h-12 rounded-2xl font-bold border-slate-200 text-slate-500 hover:bg-slate-50"
+              onClick={() => setTargetDelete(null)}
+              disabled={isDeleting}
+            >
+              Batal
+            </Button>
+            <Button 
+              className="h-12 rounded-2xl font-bold bg-rose-500 hover:bg-rose-600 text-white shadow-lg shadow-rose-500/20"
+              disabled={isDeleting}
+              onClick={async () => {
+                if (!targetDelete) return
+                setIsDeleting(true)
+                const res = await deleteCandidate(targetDelete.id)
+                setIsDeleting(false)
+                if (res.success) {
+                  setCandidates(prev => prev.filter(c => c.id !== targetDelete.id))
+                  setTargetDelete(null)
+                  toast.success("Kandidat berhasil dihapus")
+                } else {
+                  toast.error(res.error || "Gagal menghapus")
+                }
+              }}
+            >
+              {isDeleting ? "Menghapus..." : "Ya, Hapus"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Confirmation Dialog */}
+      <Dialog open={!!targetReset} onOpenChange={() => !isResetting && setTargetReset(null)}>
+        <DialogContent className="max-w-md rounded-[32px] p-10 bg-white border-none shadow-2xl text-center">
+          <div className="w-20 h-20 bg-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-amber-500">
+            <RefreshCw size={40} />
+          </div>
+          <h2 className="text-[24px] font-black text-[#0F172A] uppercase tracking-tighter italic mb-3">Reset Status?</h2>
+          <p className="text-slate-500 text-[15px] font-medium leading-relaxed mb-10">
+            Kembalikan status <span className="font-bold text-slate-900">{targetReset?.name}</span> ke 'Pending' agar bisa mengisi formulir kembali?
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <Button 
+              variant="outline" 
+              className="h-12 rounded-2xl font-bold border-slate-200 text-slate-500 hover:bg-slate-50"
+              onClick={() => setTargetReset(null)}
+              disabled={isResetting}
+            >
+              Batal
+            </Button>
+            <Button 
+              className="h-12 rounded-2xl font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/20"
+              disabled={isResetting}
+              onClick={async () => {
+                if (!targetReset) return
+                setIsResetting(true)
+                const res = await updateCandidateStatus(targetReset.id, "PENDING")
+                setIsResetting(false)
+                if (res.success) {
+                  setTargetReset(null)
+                  router.refresh()
+                  toast.success("Status berhasil di-reset")
+                } else {
+                  toast.error("Gagal me-reset status")
+                }
+              }}
+            >
+              {isResetting ? "Memproses..." : "Ya, Reset"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
