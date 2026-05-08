@@ -130,6 +130,16 @@ export default function AcademicClient({ candidate }: { candidate: any }) {
               <h2 className="text-[24px] md:text-[32px] font-black text-slate-900 leading-[1.2] tracking-tight">
                 {currentQuestion?.text}
               </h2>
+              
+              {currentQuestion?.imageUrl && (
+                <div className="bg-white p-4 rounded-[32px] border-2 border-slate-100 shadow-sm overflow-hidden flex items-center justify-center mx-auto max-w-lg">
+                  <img 
+                    src={currentQuestion.imageUrl} 
+                    alt="Question image" 
+                    className="max-w-full h-auto rounded-2xl"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="space-y-4">

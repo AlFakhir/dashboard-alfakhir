@@ -36,7 +36,10 @@ export default async function DashboardLayout({
               <Users size={14} /> Siswa
             </Link>
             <Link href="/admin/questions" className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-white/10 transition-all text-[12px] font-bold uppercase tracking-tight text-slate-300 hover:text-white">
-              <HelpCircle size={14} /> Soal
+              <HelpCircle size={14} /> Observasi
+            </Link>
+            <Link href="/admin/academic" className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-white/10 transition-all text-[12px] font-bold uppercase tracking-tight text-slate-300 hover:text-white">
+              <GraduationCap size={14} /> Akademik
             </Link>
             <div className="w-px h-4 bg-white/10 mx-2" />
             <div className="flex items-center gap-1">

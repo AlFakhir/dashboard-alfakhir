@@ -23,7 +23,8 @@ export function Header({ session, isPortal }: HeaderProps) {
   const getPageTitle = () => {
     if (pathname === "/admin") return "Ringkasan Utama"
     if (pathname === "/admin/candidates") return "Seluruh Kandidat"
-    if (pathname === "/admin/questions") return "Manajemen Soal"
+    if (pathname === "/admin/questions") return "Manajemen Soal Observasi"
+    if (pathname === "/admin/academic") return "Manajemen Soal Akademik"
     if (pathname === "/admin/sd") return "Dashboard SD"
     if (pathname === "/admin/smp") return "Dashboard SMP"
     if (pathname === "/interviewer") return "Kandidat Saya"

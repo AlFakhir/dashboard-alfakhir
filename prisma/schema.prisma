@@ -43,6 +43,7 @@ model AcademicQuestion {
   id            String             @id @default(cuid())
   text          String
   subject       String
+  imageUrl      String?
   options       String             // JSON array
   correctAnswer String
   order         Int                @default(0)
