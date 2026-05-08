@@ -115,6 +115,23 @@ export default function AcademicManagerClient() {
     }
   }
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Ukuran gambar terlalu besar (maks 2MB)")
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setFormData({ ...formData, imageUrl: reader.result as string })
+      toast.success("Gambar berhasil diunggah")
+    }
+    reader.readAsDataURL(file)
+  }
+
   const filteredQuestions = questions.filter(q => {
     const matchesSearch = q.text.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesSubject = selectedSubject === "Semua" || q.subject === selectedSubject
@@ -303,19 +320,58 @@ export default function AcademicManagerClient() {
                   />
                 </div>
 
-                {/* Image URL */}
+                {/* Image Upload */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic flex items-center gap-2">
                     <ImageIcon size={12} />
-                    Link Gambar (Opsional)
+                    Gambar Soal (Opsional)
                   </label>
-                  <input 
-                    type="text"
-                    placeholder="/academic/nama-gambar.png"
-                    className="w-full h-12 px-4 rounded-xl bg-slate-50 border-2 border-slate-50 focus:border-slate-900 outline-none font-bold text-sm"
-                    value={formData.imageUrl}
-                    onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                  />
+                  
+                  <div className="relative group">
+                    {formData.imageUrl ? (
+                      <div className="relative rounded-2xl overflow-hidden border-2 border-slate-100 group">
+                        <img src={formData.imageUrl} className="w-full h-48 object-contain bg-slate-50" alt="Preview" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <Button 
+                            variant="secondary" 
+                            size="sm" 
+                            className="rounded-xl font-bold"
+                            onClick={() => (document.getElementById("image-upload") as HTMLInputElement).click()}
+                          >
+                            Ganti
+                          </Button>
+                          <Button 
+                            variant="destructive" 
+                            size="sm" 
+                            className="rounded-xl font-bold"
+                            onClick={() => setFormData({...formData, imageUrl: ""})}
+                          >
+                            Hapus
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={() => (document.getElementById("image-upload") as HTMLInputElement).click()}
+                        className="w-full h-48 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-400 transition-all flex flex-col items-center justify-center gap-3 group"
+                      >
+                        <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Plus className="text-slate-400" size={20} />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Klik untuk Upload</p>
+                          <p className="text-[9px] font-bold text-slate-400 uppercase mt-1">Maksimal 2MB (PNG/JPG)</p>
+                        </div>
+                      </button>
+                    )}
+                    <input 
+                      id="image-upload"
+                      type="file" 
+                      accept="image/*"
+                      className="hidden" 
+                      onChange={handleImageUpload}
+                    />
+                  </div>
                 </div>
 
                 {/* Options */}
