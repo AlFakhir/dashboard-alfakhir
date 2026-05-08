@@ -160,7 +160,7 @@ export function Header({ session, isPortal }: HeaderProps) {
         <Dialog open={showQR} onOpenChange={setShowQR}>
           <DialogContent className="max-w-3xl rounded-[40px] shadow-2xl p-0 overflow-hidden border-none">
             <div className="bg-slate-950 p-10 text-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-blue-500/10 opacity-50" />
+              <div className="absolute inset-0 bg-linear-to-r from-primary/10 to-blue-500/10 opacity-50" />
               <DialogTitle className="text-[24px] font-black text-white uppercase tracking-tighter italic mb-2 relative z-10">
                 Pusat Akses Portal QR
               </DialogTitle>
