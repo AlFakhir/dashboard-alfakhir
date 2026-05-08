@@ -29,7 +29,10 @@ export async function addCandidate(data: { name: string; level: string; room?: s
     })
     await triggerRevalidate("/admin/candidates")
     await triggerRevalidate("/admin/admin")
+    await triggerRevalidate("/academic")
+    await triggerRevalidate("/form")
     return { success: true }
+
   } catch (error) {
     console.error("Failed to add candidate:", error)
     return { success: false, error: "Gagal menambahkan kandidat" }
@@ -40,6 +43,8 @@ export async function deleteCandidate(id: string) {
   try {
     await prisma.candidate.delete({ where: { id } })
     await triggerRevalidate("/admin/candidates")
+    await triggerRevalidate("/academic")
+    await triggerRevalidate("/form")
     return { success: true }
   } catch (error) {
     return { success: false, error: "Gagal menghapus kandidat" }
@@ -141,6 +146,8 @@ export async function updateCandidate(id: string, data: { name?: string; level?:
   try {
     await prisma.candidate.update({ where: { id }, data })
     await triggerRevalidate("/admin/candidates")
+    await triggerRevalidate("/academic")
+    await triggerRevalidate("/form")
     return { success: true }
   } catch (error) {
     return { success: false }
@@ -179,6 +186,8 @@ export async function importCandidates(candidates: any[]) {
     
     await triggerRevalidate("/admin/candidates")
     await triggerRevalidate("/admin/admin")
+    await triggerRevalidate("/academic")
+    await triggerRevalidate("/form")
     return { success: true, count: candidates.length }
   } catch (error) {
     console.error("Import error:", error)

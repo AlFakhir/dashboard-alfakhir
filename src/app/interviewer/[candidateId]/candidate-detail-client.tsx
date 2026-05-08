@@ -297,51 +297,56 @@ export default function CandidateDetailClient({
           </Card>
 
           {/* FORM RESPONSES */}
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-sm border-slate-200 overflow-hidden">
             <CardHeader className="bg-slate-50/50 border-b border-slate-100">
               <CardTitle className="text-lg font-bold text-slate-900">Jawaban Formulir Orang Tua & Siswa</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              {formEntries.length === 0 ? (
-                <div className="text-center py-10">
-                  <AlertCircle className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-                  <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Belum ada jawaban masuk</p>
-                </div>
-              ) : (
-                <div className="space-y-8">
-                  {/* Parent Section */}
-                  <div className="space-y-4">
-                    <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                      <div className="w-1.5 h-4 bg-emerald-500 rounded-full" /> Observasi Orang Tua
-                    </h4>
-                    <div className="grid gap-3">
-                      {formEntries.filter((e: any) => e.question.category === "ORANG TUA").map((entry: any) => (
-                        <div key={entry.id} className="bg-slate-50/70 p-4 rounded-xl border border-slate-100">
+              <div className="space-y-10">
+                {/* Parent Section */}
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                    <div className="w-1.5 h-4 bg-emerald-500 rounded-full" /> Observasi Orang Tua
+                  </h4>
+                  <div className="grid gap-3">
+                    {formEntries.filter((e: any) => e.question.category === "ORANG TUA").length > 0 ? (
+                      formEntries.filter((e: any) => e.question.category === "ORANG TUA").map((entry: any) => (
+                        <div key={entry.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:border-emerald-200 transition-all">
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{entry.question.text}</p>
                           <p className="text-sm text-slate-700 font-bold leading-relaxed">{entry.answer || entry.value || "-"}</p>
                         </div>
-                      ))}
-                    </div>
+                      ))
+                    ) : (
+                      <div className="py-8 px-6 rounded-2xl border-2 border-dashed border-slate-100 bg-slate-50/50 text-center">
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest italic">Menunggu jawaban formulir dari orang tua...</p>
+                      </div>
+                    )}
                   </div>
+                </div>
 
-                  {/* Student Section */}
-                  {candidate.level === "SMP" && (
-                    <div className="space-y-4 pt-6 border-t border-slate-100">
-                      <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                        <div className="w-1.5 h-4 bg-blue-500 rounded-full" /> Wawancara Calon Siswa
-                      </h4>
-                      <div className="grid gap-3">
-                        {formEntries.filter((e: any) => e.question.category === "SISWA").map((entry: any) => (
-                          <div key={entry.id} className="bg-blue-50/20 p-4 rounded-xl border border-blue-100/30">
-                            <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">{entry.question.text}</p>
+                {/* Student Section */}
+                {candidate.level === "SMP" && (
+                  <div className="space-y-4 pt-8 border-t border-slate-100">
+                    <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                      <div className="w-1.5 h-4 bg-blue-500 rounded-full" /> Wawancara Calon Siswa
+                    </h4>
+                    <div className="grid gap-3">
+                      {formEntries.filter((e: any) => e.question.category === "SISWA").length > 0 ? (
+                        formEntries.filter((e: any) => e.question.category === "SISWA").map((entry: any) => (
+                          <div key={entry.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:border-blue-200 transition-all">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{entry.question.text}</p>
                             <p className="text-sm text-slate-700 font-bold leading-relaxed">{entry.answer || entry.value || "-"}</p>
                           </div>
-                        ))}
-                      </div>
+                        ))
+                      ) : (
+                        <div className="py-8 px-6 rounded-2xl border-2 border-dashed border-slate-100 bg-slate-50/50 text-center">
+                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest italic">Menunggu jawaban formulir dari calon siswa...</p>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>

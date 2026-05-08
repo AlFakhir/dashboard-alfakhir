@@ -18,8 +18,15 @@ export default function AcademicPortalClient({ candidates }: { candidates: any[]
       <div className="max-w-2xl mx-auto space-y-10 pt-10">
         {/* Header */}
         <div className="text-center space-y-4">
-          <div className="h-20 w-20 bg-emerald-600 rounded-[32px] flex items-center justify-center mx-auto shadow-2xl shadow-emerald-500/20 rotate-3">
-            <User className="h-10 w-10 text-white" />
+          <div className="relative h-28 w-28 mx-auto group">
+            <div className="absolute inset-0 bg-emerald-500/20 rounded-[40px] blur-2xl group-hover:bg-emerald-500/30 transition-all duration-500" />
+            <div className="relative h-28 w-28 bg-white rounded-[32px] flex items-center justify-center shadow-2xl shadow-emerald-500/10 border border-emerald-50 overflow-hidden p-2">
+              <img 
+                src="/logo-smp.png" 
+                alt="Logo SMP Al Fakhir"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
           <div className="space-y-1">
             <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">Portal Akademik</h1>
@@ -70,8 +77,12 @@ export default function AcademicPortalClient({ candidates }: { candidates: any[]
                   className="group flex items-center justify-between p-5 rounded-3xl border-2 border-slate-50 bg-slate-50/30 hover:border-emerald-500 hover:bg-emerald-50 transition-all active:scale-[0.98]"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shadow-sm group-hover:bg-emerald-500 transition-colors">
-                      <User className="h-6 w-6 text-slate-400 group-hover:text-white" />
+                    <div className="h-12 w-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center shadow-sm group-hover:border-emerald-200 transition-all overflow-hidden p-1.5">
+                      <img 
+                        src="/logo-smp.png" 
+                        alt="Logo Unit"
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <div>
                       <p className="font-bold text-slate-900 uppercase tracking-tight group-hover:text-emerald-900 transition-colors">{candidate.name}</p>

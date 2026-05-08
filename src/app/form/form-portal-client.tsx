@@ -63,10 +63,30 @@ export default function FormPortalClient({ candidates }: Props) {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="text-center space-y-4 mb-10">
-        <div className="relative inline-block">
-          <div className="absolute inset-0 bg-slate-900/10 blur-xl rounded-full translate-y-2 scale-75" />
-          <div className="h-20 w-20 bg-slate-900 rounded-[28px] flex items-center justify-center relative shadow-2xl rotate-3 transition-transform hover:rotate-0 duration-500">
-            <GraduationCap className="h-10 w-10 text-white" />
+        <div className="flex items-center justify-center gap-6 mb-10">
+          {/* Logo SD */}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-orange-500/10 blur-xl rounded-full scale-75 group-hover:bg-orange-500/20 transition-all duration-500" />
+            <div className="relative h-20 w-20 bg-white rounded-[28px] flex items-center justify-center shadow-2xl border border-orange-50 p-2 hover:scale-105 transition-transform duration-500">
+              <img src="/logo-sd.png" alt="SD Logo" className="w-full h-full object-contain" />
+            </div>
+            <div className="mt-2 text-center">
+              <span className="text-[9px] font-black text-orange-500 uppercase tracking-widest">Unit SD</span>
+            </div>
+          </div>
+
+          {/* Divider Dot */}
+          <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+
+          {/* Logo SMP */}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/10 blur-xl rounded-full scale-75 group-hover:bg-emerald-500/20 transition-all duration-500" />
+            <div className="relative h-20 w-20 bg-white rounded-[28px] flex items-center justify-center shadow-2xl border border-emerald-50 p-2 hover:scale-105 transition-transform duration-500">
+              <img src="/logo-smp.png" alt="SMP Logo" className="w-full h-full object-contain" />
+            </div>
+            <div className="mt-2 text-center">
+              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Unit SMP</span>
+            </div>
           </div>
         </div>
         <div>
@@ -291,8 +311,15 @@ export default function FormPortalClient({ candidates }: Props) {
                           : "border-slate-100 bg-white text-slate-400 hover:border-slate-200"
                     )}
                   >
-                    <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-colors", studentSubmitted ? "bg-slate-200 text-slate-400" : role === "student" ? "bg-white/20" : "bg-blue-50 text-blue-500")}>
-                      <GraduationCap className="h-6 w-6" />
+                    <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center transition-colors overflow-hidden p-2", studentSubmitted ? "bg-slate-200" : role === "student" ? "bg-white/20" : "bg-white border border-slate-100 shadow-sm")}>
+                      <img 
+                        src={level === "SD" 
+                          ? "/logo-sd.png" 
+                          : "/logo-smp.png"
+                        }
+                        alt="Logo Unit"
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <div className="flex flex-col">
                       <span className={cn("font-black italic uppercase tracking-tight", studentSubmitted ? "text-slate-400" : "")}>Calon Siswa Sendiri</span>

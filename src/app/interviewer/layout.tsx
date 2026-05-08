@@ -1,4 +1,5 @@
-import { GraduationCap, LogOut } from "lucide-react"
+import { BrandLogo } from "@/components/layout/brand-logo"
+import { LogOut } from "lucide-react"
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
@@ -18,13 +19,7 @@ export default async function InterviewerLayout({
       <nav className="h-[70px] bg-[#0D1B2A] text-white flex items-center justify-between px-8 sticky top-0 z-50 border-b border-white/5">
         <div className="flex items-center gap-4">
           <Link href="/interviewer" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <GraduationCap className="h-6 w-6 text-white" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[14px] font-black tracking-tight leading-none uppercase">AL FAKHIR</span>
-              <span className="text-[9px] text-emerald-400 font-bold tracking-[0.3em] uppercase mt-1">PORTAL PEWAWANCARA</span>
-            </div>
+            <BrandLogo role="interviewer" />
           </Link>
         </div>
 
