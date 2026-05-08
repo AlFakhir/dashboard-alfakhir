@@ -41,14 +41,19 @@ export function BrandLogo({ role }: { role: string }) {
   }
 
   return (
-    <>
-      <div className="w-10 h-10 rounded-xl overflow-hidden bg-white flex items-center justify-center shadow-lg">
-        <img src="/logo-smp.png" alt="Logo Al Fakhir" className="w-full h-full object-contain p-1" />
+    <div className="flex items-center gap-3">
+      <div className="flex items-center -space-x-2">
+        <div className="w-8 h-8 rounded-lg overflow-hidden bg-white flex items-center justify-center shadow-lg relative z-10 border border-white/10">
+          <img src="/logo-sd.png" alt="Logo SD" className="w-full h-full object-contain p-1" />
+        </div>
+        <div className="w-8 h-8 rounded-lg overflow-hidden bg-white flex items-center justify-center shadow-lg relative z-0 border border-white/10">
+          <img src="/logo-smp.png" alt="Logo SMP" className="w-full h-full object-contain p-1" />
+        </div>
       </div>
       <div className="flex flex-col">
-        <span className="text-[14px] font-black tracking-tight leading-none uppercase text-white">AL FAKHIR</span>
-        <span className="text-[8px] font-bold text-slate-400 tracking-[0.2em] uppercase italic">Observation System</span>
+        <span className="text-[13px] font-black tracking-tight leading-none uppercase text-white">AL FAKHIR</span>
+        <span className="text-[8px] font-bold text-slate-400 tracking-[0.2em] uppercase italic mt-0.5">Observation System</span>
       </div>
-    </>
+    </div>
   )
 }
