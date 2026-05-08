@@ -12,30 +12,45 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 })
     }
 
-    // 1. Simpan semua jawaban dalam satu transaksi
-    const answerEntries = Object.entries(answers).map(([questionId, value]) => ({
-      candidateId,
-      questionId,
-      value: value as string,
-    }))
+    // 1. Dapatkan semua pertanyaan yang valid untuk kategori peran ini
+    const categoryToProcess = role === "student" ? "SISWA" : "ORANG TUA"
+    const validQuestions = await prisma.formQuestion.findMany({
+      where: { category: categoryToProcess },
+      select: { id: true }
+    })
+    const validQuestionIds = new Set(validQuestions.map(q => q.id))
+
+    // Filter jawaban agar hanya memproses yang sesuai dengan kategori perannya
+    const filteredAnswers = Object.entries(answers)
+      .filter(([questionId]) => validQuestionIds.has(questionId))
+      .map(([questionId, value]) => ({
+        candidateId,
+        questionId,
+        value: value as string,
+      }))
+
+    if (filteredAnswers.length === 0) {
+      // Jika tidak ada jawaban valid untuk kategori ini, mungkin hanya update status/metadata
+      // Tapi biasanya minimal ada satu jawaban
+    }
 
     await prisma.$transaction(async (tx) => {
-      // Hapus hanya jawaban untuk kategori yang sedang diisi (agar tidak menimpa peran lain)
-      const categoryToClear = role === "student" ? "SISWA" : "ORANG TUA"
-
+      // Hapus hanya jawaban untuk pertanyaan yang masuk dalam kategori peran ini
       await (tx as any).formAnswer.deleteMany({
         where: { 
           candidateId,
-          question: {
-            category: categoryToClear
+          questionId: {
+            in: Array.from(validQuestionIds)
           }
         },
       })
 
-      // Simpan jawaban baru
-      await (tx as any).formAnswer.createMany({
-        data: answerEntries,
-      })
+      // Simpan jawaban baru (hanya yang sudah difilter)
+      if (filteredAnswers.length > 0) {
+        await (tx as any).formAnswer.createMany({
+          data: filteredAnswers,
+        })
+      }
 
       // 2. Update status kandidat dan simpan siapa pewawancaranya serta email pengirim
       await (tx as any).candidate.update({
