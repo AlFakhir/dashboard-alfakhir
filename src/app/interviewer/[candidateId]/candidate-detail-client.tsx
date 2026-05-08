@@ -28,7 +28,8 @@ import {
   AlertCircle,
   CheckCircle,
   GraduationCap,
-  History
+  History,
+  QrCode
 } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 
@@ -82,6 +83,7 @@ export default function CandidateDetailClient({
   const [submitting, setSubmitting] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [showAcademicDetails, setShowAcademicDetails] = useState(false)
+  const [showQrDialog, setShowQrDialog] = useState(false)
 
   // AI summary state
   const [summary, setSummary] = useState<string | null>(savedSummary)
@@ -377,11 +379,8 @@ export default function CandidateDetailClient({
           </Card>
 
           {/* ACADEMIC PERFORMANCE CARD */}
-          {candidate.level === "SMP" && candidate.academicTestResult ? (
-            <Card 
-              className="shadow-sm border-emerald-100 bg-linear-to-br from-emerald-50/30 to-white overflow-hidden cursor-pointer hover:border-emerald-300 transition-all"
-              onClick={() => setShowAcademicDetails(true)}
-            >
+          {candidate.level === "SMP" ? (
+            <Card className="shadow-sm border-emerald-100 bg-linear-to-br from-emerald-50/30 to-white overflow-hidden">
               <CardHeader className="pb-3 border-b border-emerald-100/50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -393,47 +392,69 @@ export default function CandidateDetailClient({
                       <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest leading-none">1 Soal = 4 Poin</p>
                     </div>
                   </div>
-                  <Badge variant="success" className="text-[9px] font-bold h-7 px-3 rounded-lg">LIHAT DETAIL</Badge>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setShowQrDialog(true)}
+                    className="h-8 border-emerald-200 text-emerald-600 hover:bg-emerald-50 gap-2 font-bold text-[10px] uppercase tracking-wider"
+                  >
+                    <QrCode className="h-3 w-3" /> Akses Tes
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent className="p-5">
-                <div className="space-y-6">
-                  <div className="text-center py-4 bg-white rounded-2xl border border-emerald-50 shadow-sm">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Skor Akhir</p>
-                    <div className="text-5xl font-black text-slate-900 italic leading-none">{candidate.academicTestResult.totalScore.toFixed(0)}</div>
-                    <div className="h-2 w-32 bg-slate-100 rounded-full mx-auto mt-4 overflow-hidden border border-slate-50">
-                      <div className="h-full bg-emerald-500" style={{ width: `${candidate.academicTestResult.totalScore}%` }} />
+                {candidate.academicTestResult ? (
+                  <div className="space-y-6" onClick={() => setShowAcademicDetails(true)}>
+                    <div className="text-center py-4 bg-white rounded-2xl border border-emerald-50 shadow-sm cursor-pointer hover:border-emerald-200 transition-all">
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Skor Akhir</p>
+                      <div className="text-5xl font-black text-slate-900 italic leading-none">{candidate.academicTestResult.totalScore.toFixed(0)}</div>
+                      <div className="h-2 w-32 bg-slate-100 rounded-full mx-auto mt-4 overflow-hidden border border-slate-50">
+                        <div className="h-full bg-emerald-500" style={{ width: `${candidate.academicTestResult.totalScore}%` }} />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-1 border-b border-slate-100 pb-1">Performa Subjek</p>
+                      {(() => {
+                        const stats = JSON.parse(candidate.academicTestResult.subjectScores)
+                        return Object.entries(stats).map(([subject, data]: [string, any]) => {
+                          const percentage = (data.correct / data.total) * 100
+                          return (
+                            <div key={subject} className="space-y-1">
+                              <div className="flex justify-between items-end px-0.5">
+                                <span className="text-[11px] font-bold text-slate-600">{subject}</span>
+                                <span className="text-[10px] font-black text-emerald-600 italic">{data.correct}/{data.total}</span>
+                              </div>
+                              <div className="h-1.5 bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+                                <div className="h-full bg-emerald-500" style={{ width: `${percentage}%` }} />
+                              </div>
+                            </div>
+                          )
+                        })
+                      })()}
                     </div>
                   </div>
-
-                  <div className="space-y-3">
-                    <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-1 border-b border-slate-100 pb-1">Performa Subjek</p>
-                    {(() => {
-                      const stats = JSON.parse(candidate.academicTestResult.subjectScores)
-                      return Object.entries(stats).map(([subject, data]: [string, any]) => {
-                        const percentage = (data.correct / data.total) * 100
-                        return (
-                          <div key={subject} className="space-y-1">
-                            <div className="flex justify-between items-end px-0.5">
-                              <span className="text-[11px] font-bold text-slate-600">{subject}</span>
-                              <span className="text-[10px] font-black text-emerald-600 italic">{data.correct}/{data.total}</span>
-                            </div>
-                            <div className="h-1.5 bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
-                              <div className="h-full bg-emerald-500" style={{ width: `${percentage}%` }} />
-                            </div>
-                          </div>
-                        )
-                      })
-                    })()}
+                ) : (
+                  <div className="text-center py-6 space-y-4">
+                    <div className="h-14 w-14 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto text-emerald-200">
+                      <GraduationCap className="h-8 w-8" />
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Belum ada hasil tes</p>
+                    <Button 
+                      onClick={() => setShowQrDialog(true)}
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md h-10 uppercase text-[10px] tracking-widest"
+                    >
+                      Mulai Tes (Tampilkan QR)
+                    </Button>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           ) : (
             <Card className="border-dashed border-2 flex items-center justify-center py-10 bg-slate-50/50">
               <div className="text-center space-y-2">
                 <GraduationCap className="h-8 w-8 text-slate-200 mx-auto" />
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Belum ada tes akademik</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Hanya untuk level SMP</p>
               </div>
             </Card>
           )}
@@ -441,6 +462,35 @@ export default function CandidateDetailClient({
       </div>
 
       {/* DIALOGS */}
+      
+      {/* QR Code Access Dialog */}
+      <Dialog open={showQrDialog} onOpenChange={setShowQrDialog}>
+        <DialogContent className="rounded-[40px] p-0 overflow-hidden max-w-sm border-none shadow-2xl">
+          <div className="bg-emerald-600 p-8 text-center text-white">
+            <div className="h-16 w-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <QrCode className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-xl font-bold uppercase tracking-tight">Akses Tes Akademik</h2>
+            <p className="text-emerald-100 text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80">Scan untuk mulai ujian</p>
+          </div>
+          <div className="p-10 bg-white flex flex-col items-center">
+            <div className="p-4 bg-white border-4 border-slate-50 rounded-[32px] shadow-inner mb-6">
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`${window.location.origin}/academic/${candidate.id}`)}`}
+                alt="QR Code Akses Siswa"
+                className="w-[200px] h-[200px]"
+              />
+            </div>
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 w-full text-center">
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 leading-none">Link Manual</p>
+              <p className="text-[10px] font-bold text-slate-600 break-all select-all">{window.location.origin}/academic/{candidate.id}</p>
+            </div>
+          </div>
+          <div className="p-6 bg-slate-50 border-t border-slate-100">
+            <Button onClick={() => setShowQrDialog(false)} className="w-full h-12 rounded-2xl bg-slate-900 text-white font-bold uppercase tracking-widest text-xs">Tutup</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       
       {/* Academic Details Dialog */}
       <Dialog open={showAcademicDetails} onOpenChange={setShowAcademicDetails}>
