@@ -89,12 +89,22 @@ export default function AcademicClient({ candidate }: { candidate: any }) {
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
               <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Progress</span>
-              <span className="text-[14px] font-black text-primary italic">{answeredCount} / {questions.length}</span>
+              <span className={cn(
+                "text-[14px] font-black italic transition-colors",
+                answeredCount === questions.length ? "text-emerald-500" : "text-primary"
+              )}>
+                {answeredCount} / {questions.length}
+              </span>
             </div>
             <Button 
               onClick={handleSubmit}
-              disabled={submitting}
-              className="bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest text-[11px] h-11 px-8 rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95"
+              disabled={submitting || answeredCount < questions.length}
+              className={cn(
+                "font-black uppercase tracking-widest text-[11px] h-11 px-8 rounded-2xl transition-all active:scale-95",
+                answeredCount === questions.length 
+                  ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/20" 
+                  : "bg-slate-200 text-slate-400 cursor-not-allowed border-none shadow-none"
+              )}
             >
               {submitting ? "Mengirim..." : "Selesai & Kirim"}
             </Button>
@@ -194,10 +204,16 @@ export default function AcademicClient({ candidate }: { candidate: any }) {
                     handleSubmit()
                   }
                 }}
-                className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-14 px-10 rounded-2xl shadow-xl shadow-slate-900/10 transition-all active:scale-95"
+                disabled={currentIndex === questions.length - 1 && (submitting || answeredCount < questions.length)}
+                className={cn(
+                  "font-bold h-14 px-10 rounded-2xl transition-all active:scale-95 flex items-center gap-2",
+                  currentIndex === questions.length - 1 
+                    ? (answeredCount === questions.length ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/20" : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none")
+                    : "bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-900/10"
+                )}
               >
                 {currentIndex === questions.length - 1 ? "Selesai & Kirim" : "Soal Berikutnya"}
-                <ChevronRight className="ml-2 h-5 w-5" />
+                <ChevronRight className="h-5 w-5" />
               </Button>
             </div>
           </div>
@@ -237,11 +253,18 @@ export default function AcademicClient({ candidate }: { candidate: any }) {
                   />
                 </div>
                 
-                {answeredCount < questions.length && (
-                  <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-2xl border border-amber-100 mt-6">
+                {answeredCount < questions.length ? (
+                  <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-2xl border border-amber-100 mt-6 animate-in fade-in duration-500">
                     <AlertCircle className="text-amber-500 h-4 w-4 shrink-0 mt-0.5" />
                     <p className="text-[11px] text-amber-700 font-bold leading-relaxed italic">
                       Masih ada {questions.length - answeredCount} soal yang belum diisi. Pastikan semua terjawab ya!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-3 p-4 bg-emerald-50 rounded-2xl border border-emerald-100 mt-6 animate-in zoom-in duration-500">
+                    <CheckCircle2 className="text-emerald-500 h-4 w-4 shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-emerald-700 font-black leading-relaxed italic uppercase tracking-tight">
+                      Luar biasa! Semua soal sudah terisi. Kamu bisa mengirim jawabanmu sekarang.
                     </p>
                   </div>
                 )}
