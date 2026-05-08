@@ -158,41 +158,50 @@ export function Header({ session, isPortal }: HeaderProps) {
 
         {/* Global QR Dialog */}
         <Dialog open={showQR} onOpenChange={setShowQR}>
-          <DialogContent className="max-w-2xl rounded-[32px] shadow-2xl p-0 overflow-hidden border-none">
-            <div className="bg-slate-900 p-8 text-center">
-              <DialogTitle className="text-[20px] font-black text-white uppercase tracking-tighter italic mb-2">
+          <DialogContent className="max-w-3xl rounded-[40px] shadow-2xl p-0 overflow-hidden border-none">
+            <div className="bg-slate-950 p-10 text-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-blue-500/10 opacity-50" />
+              <DialogTitle className="text-[24px] font-black text-white uppercase tracking-tighter italic mb-2 relative z-10">
                 Pusat Akses Portal QR
               </DialogTitle>
-              <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">
+              <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest relative z-10">
                 Scan untuk langsung menuju halaman portal
               </p>
             </div>
             
-            <div className="p-10 grid grid-cols-2 gap-10 bg-white">
+            <div className="p-12 grid grid-cols-2 gap-16 bg-white relative">
+              {/* Vertical Divider */}
+              <div className="absolute left-1/2 top-12 bottom-12 w-px bg-slate-100 hidden md:block" />
+
               {/* Portal Observasi */}
-              <div className="flex flex-col items-center">
-                <div className="bg-slate-50 p-5 rounded-[32px] border-2 border-slate-100 shadow-sm mb-5">
+              <div className="flex flex-col items-center group">
+                <div className="bg-slate-50 p-6 rounded-[40px] border-2 border-slate-100 shadow-sm mb-6 group-hover:border-slate-900 group-hover:shadow-xl transition-all duration-500">
                   <QRCodeSVG 
                     value={`${origin}/form`} 
-                    size={160}
+                    size={180}
                     level="H"
                   />
                 </div>
-                <h4 className="text-[13px] font-black text-slate-900 uppercase tracking-tight italic mb-1">Portal Observasi</h4>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">Formulir Mandiri Siswa & Ortu</p>
+                <div className="text-center">
+                  <h4 className="text-[15px] font-black text-slate-900 uppercase tracking-tight italic mb-1">Portal Observasi</h4>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">Formulir Mandiri<br/>Siswa & Ortu</p>
+                </div>
               </div>
+...
 
               {/* Portal Akademik */}
-              <div className="flex flex-col items-center">
-                <div className="bg-blue-50 p-5 rounded-[32px] border-2 border-blue-100 shadow-sm mb-5">
+              <div className="flex flex-col items-center group">
+                <div className="bg-blue-50 p-6 rounded-[40px] border-2 border-blue-100 shadow-sm mb-6 group-hover:border-blue-600 group-hover:shadow-xl transition-all duration-500">
                   <QRCodeSVG 
                     value={`${origin}/academic`} 
-                    size={160}
+                    size={180}
                     level="H"
                   />
                 </div>
-                <h4 className="text-[13px] font-black text-blue-600 uppercase tracking-tight italic mb-1">Portal Akademik</h4>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">Ujian Seleksi Akademik</p>
+                <div className="text-center">
+                  <h4 className="text-[15px] font-black text-blue-600 uppercase tracking-tight italic mb-1">Portal Akademik</h4>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">Ujian Seleksi<br/>Akademik</p>
+                </div>
               </div>
             </div>
             
