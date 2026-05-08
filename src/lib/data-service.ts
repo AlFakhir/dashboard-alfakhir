@@ -133,6 +133,12 @@ export async function getCandidateById(id: string) {
     include: {
       notes: true,
       aiSummary: true,
+      academicTestResult: true,
+      academicResponses: {
+        include: {
+          question: true
+        }
+      },
       formAnswers: {
         include: {
           question: true

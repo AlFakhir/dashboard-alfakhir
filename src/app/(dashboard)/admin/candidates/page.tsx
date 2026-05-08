@@ -12,19 +12,20 @@ export default async function AdminCandidatesPage() {
   const session = await auth()
   if (!session || !session.user?.role?.startsWith("admin")) redirect("/login")
 
-  const candidates = await prisma.candidate.findMany({
+  const candidates = await (prisma as any).candidate.findMany({
     include: {
       notes: {
         take: 1,
         orderBy: { createdAt: "desc" }
-      }
+      },
+      academicTestResult: true
     },
     orderBy: {
       createdAt: "desc"
     }
   })
 
-  const enriched = candidates.map((c) => ({
+  const enriched = (candidates as any[]).map((c) => ({
     ...c,
     note: c.notes[0] || null,
     hasNote: c.notes.length > 0,

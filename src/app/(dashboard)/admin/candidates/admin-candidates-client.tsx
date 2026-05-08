@@ -34,6 +34,10 @@ interface Candidate {
   selectedInterviewer?: string | null
   parentPhone?: string | null
   correctedName?: string | null
+  academicTestResult?: {
+    totalScore: number
+    subjectScores: string
+  } | null
 }
 
 interface Props {
@@ -270,6 +274,7 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
                 <th className={cn(thStyle, "w-32")}>Ruangan</th>
                 <th className={cn(thStyle, "w-48")}>Pewawancara</th>
                 <th className={cn(thStyle, "w-36")}>Status</th>
+                <th className={cn(thStyle, "w-32")}>Skor Akad.</th>
                 <th className={cn(thStyle, "w-40")}>Tanggal</th>
                 <th className={cn(thStyle, "w-32")}>Aksi</th>
               </tr>
@@ -277,7 +282,7 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
             <tbody>
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-24 text-center text-[#94A3B8]">
+                  <td colSpan={9} className="py-24 text-center text-[#94A3B8]">
                     <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-4">
                       <Search size={40} className="text-slate-200" />
                     </div>
@@ -348,6 +353,20 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
                     </td>
                     <td className={tdCenterStyle}>
                       <StatusBadge status={c.status} />
+                    </td>
+                    <td className={tdCenterStyle}>
+                      {c.level === "SMP" ? (
+                        c.academicTestResult ? (
+                          <div className="flex flex-col items-center">
+                            <span className="font-black text-primary text-[14px] italic">{c.academicTestResult.totalScore.toFixed(0)}</span>
+                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Teruji</span>
+                          </div>
+                        ) : (
+                          <span className="text-[10px] text-slate-300 font-bold italic uppercase">Belum Ujian</span>
+                        )
+                      ) : (
+                        <span className="text-slate-300">-</span>
+                      )}
                     </td>
                     <td className={cn(tdCenterStyle, "text-[12px] text-[#94A3B8]")}>
                       {formatDate(c.createdAt)}

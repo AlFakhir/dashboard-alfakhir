@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+// Schema updated: 2026-05-08 - Adding academic assessment models
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
