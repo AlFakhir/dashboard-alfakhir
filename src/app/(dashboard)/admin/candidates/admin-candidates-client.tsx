@@ -20,7 +20,8 @@ import { formatDate, cn } from "@/lib/utils"
 import { ITEMS_PER_PAGE, INTERVIEWERS, ROOMS } from "@/lib/constants"
 import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog"
 import { QRCodeSVG } from "qrcode.react"
-import { addCandidate, deleteCandidate, updateCandidateInterviewer, updateCandidateRoom, updateCandidate, updateCandidateStatus } from "@/lib/actions"
+import { addCandidate, deleteCandidate, updateCandidateInterviewer, updateCandidateRoom, updateCandidate, updateCandidateStatus, importCandidates } from "@/lib/actions"
+import * as XLSX from "xlsx"
 
 interface Candidate {
   id: string
@@ -71,6 +72,51 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
   const [targetReset, setTargetReset] = useState<Candidate | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
+  const [isImporting, setIsImporting] = useState(false)
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsImporting(true)
+    const reader = new FileReader()
+    reader.onload = async (evt) => {
+      try {
+        const bstr = evt.target?.result
+        const wb = XLSX.read(bstr, { type: 'binary' })
+        const wsname = wb.SheetNames[0]
+        const ws = wb.Sheets[wsname]
+        const data = XLSX.utils.sheet_to_json(ws) as any[]
+
+        // Map data with flexible column names
+        const formatted = data.map(row => ({
+          name: row.Nama || row.nama || row.NAME || row.Name,
+          level: (row.Jenjang || row.jenjang || row.LEVEL || row.Level || "SD").toString().toUpperCase(),
+          room: row.Ruangan || row.ruangan || row.ROOM || row.Room,
+          interviewer: row.Pewawancara || row.pewawancara || row.INTERVIEWER || row.Interviewer
+        })).filter(c => c.name)
+
+        if (formatted.length === 0) {
+          toast.error("Tidak ada data valid yang ditemukan.")
+          return
+        }
+
+        const res = await importCandidates(formatted)
+        if (res.success) {
+          toast.success(`${res.count} kandidat berhasil diimpor!`)
+          router.refresh()
+        } else {
+          toast.error(res.error || "Gagal mengimpor.")
+        }
+      } catch (err) {
+        toast.error("Format file tidak didukung.")
+      } finally {
+        setIsImporting(false)
+        e.target.value = "" // Reset
+      }
+    }
+    reader.readAsBinaryString(file)
+  }
 
   // Real-time polling
   useEffect(() => {
@@ -142,6 +188,26 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
           <p className="text-[13px] text-[#94A3B8] m-0 mt-1 font-medium">Monitoring data real-time untuk Unit SD & SMP</p>
         </div>
         <div className="flex gap-2.5">
+          <input 
+            type="file" 
+            id="excel-upload" 
+            className="hidden" 
+            accept=".xlsx, .xls"
+            onChange={handleFileUpload}
+          />
+          <Button 
+            variant="outline" 
+            onClick={() => document.getElementById('excel-upload')?.click()}
+            disabled={isImporting}
+            className="h-10 border-emerald-100 bg-emerald-50/30 text-emerald-600 rounded-xl px-4 text-[13px] font-semibold hover:bg-emerald-50 transition-all"
+          >
+            {isImporting ? (
+              <RefreshCw size={16} className="mr-2 animate-spin" />
+            ) : (
+              <Download size={16} className="mr-2" />
+            )}
+            Import Excel
+          </Button>
           <Button 
             variant="outline" 
             onClick={exportToCSV}

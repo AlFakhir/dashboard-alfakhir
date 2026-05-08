@@ -160,3 +160,28 @@ export async function updateCandidateStatus(id: string, status: any) {
     return { success: false }
   }
 }
+
+export async function importCandidates(candidates: any[]) {
+  try {
+    const year = getAcademicYear()
+    
+    // Process in bulk
+    await prisma.candidate.createMany({
+      data: candidates.map(c => ({
+        name: c.name,
+        level: c.level as Level,
+        room: c.room || null,
+        selectedInterviewer: c.interviewer || null,
+        status: "PENDING",
+        academicYear: year
+      }))
+    })
+    
+    await triggerRevalidate("/admin/candidates")
+    await triggerRevalidate("/admin/admin")
+    return { success: true, count: candidates.length }
+  } catch (error) {
+    console.error("Import error:", error)
+    return { success: false, error: "Gagal mengimpor data. Pastikan format kolom sudah benar." }
+  }
+}
