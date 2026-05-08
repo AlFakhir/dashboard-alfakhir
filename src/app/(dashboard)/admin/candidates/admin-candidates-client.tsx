@@ -409,6 +409,38 @@ export default function AdminCandidatesClient({ candidates: initialCandidates }:
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-8 py-6 bg-white border-t border-[#F1F5F9]">
+            <div className="text-[12px] font-bold text-[#94A3B8] uppercase tracking-wider italic">
+              Menampilkan {(page - 1) * ITEMS_PER_PAGE + 1} - {Math.min(page * ITEMS_PER_PAGE, filtered.length)} dari {filtered.length} Siswa
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="h-10 px-6 rounded-2xl border-slate-200 text-[#475569] font-black uppercase tracking-tight italic hover:bg-slate-50 disabled:opacity-30 transition-all active:scale-95"
+              >
+                Sebelumnya
+              </Button>
+              <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-[13px] font-black text-slate-900 italic">
+                {page}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="h-10 px-6 rounded-2xl border-slate-200 text-[#475569] font-black uppercase tracking-tight italic hover:bg-slate-50 disabled:opacity-30 transition-all active:scale-95"
+              >
+                Selanjutnya
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
       {/* Edit Candidate Dialog */}
       <Dialog open={!!editingCandidate} onOpenChange={() => setEditingCandidate(null)}>

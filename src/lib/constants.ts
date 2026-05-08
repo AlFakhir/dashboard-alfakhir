@@ -10,4 +10,4 @@ export const INTERVIEWERS = [
 
 export const ROOMS = ["R.01", "R.02", "R.03", "R.04", "R.05", "R.06"]
 export const SCHOOL_NAME = "Al Fakhir Modern Islamic School"
-export const ITEMS_PER_PAGE = 10
+export const ITEMS_PER_PAGE = 100
