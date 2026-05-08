@@ -274,10 +274,10 @@ export default function AcademicManagerClient() {
 
       {/* Floating Create/Edit Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden border-none rounded-[40px] shadow-2xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 h-full min-h-[600px]">
+        <DialogContent className="max-w-[95vw] lg:max-w-6xl p-0 overflow-hidden border-none rounded-[40px] shadow-2xl bg-white">
+          <div className="grid grid-cols-1 lg:grid-cols-2 h-full max-h-[90vh]">
             {/* Left side: Editor */}
-            <div className="lg:col-span-7 p-10 bg-white space-y-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
+            <div className="p-8 lg:p-12 space-y-8 overflow-y-auto custom-scrollbar border-r border-slate-50">
               <div className="space-y-1">
                 <DialogTitle className="text-[24px] font-black text-slate-900 uppercase italic tracking-tighter">
                   {isEditing ? "Edit Soal" : "Buat Soal Baru"}
@@ -435,7 +435,7 @@ export default function AcademicManagerClient() {
             </div>
 
             {/* Right side: Real-time Preview */}
-            <div className="hidden lg:col-span-5 bg-slate-950 p-10 lg:flex flex-col">
+            <div className="hidden lg:flex bg-slate-950 p-12 flex-col overflow-hidden">
               <div className="space-y-1 mb-10">
                 <h4 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] italic">Student Preview</h4>
                 <div className="h-px w-20 bg-slate-800" />
