@@ -60,6 +60,9 @@ export function Header({ session, isPortal }: HeaderProps) {
   }
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin)
+    }
     fetchNotifications()
     const interval = setInterval(fetchNotifications, 30000) // Poll every 30s
     return () => clearInterval(interval)
@@ -153,30 +156,51 @@ export function Header({ session, isPortal }: HeaderProps) {
         <SignOutButton />
 
         {/* Global QR Dialog */}
-        <Dialog open={showQR} onOpenChange={setShowQR} className="max-w-sm rounded-[32px] shadow-2xl">
-          <DialogContent className="p-10 text-center border-none">
-            <div className="flex flex-col items-center justify-center text-center">
-              <DialogTitle className="text-[20px] font-black text-slate-900 uppercase tracking-tighter italic mb-8 w-full">
-                Portal Observasi Mandiri
+        <Dialog open={showQR} onOpenChange={setShowQR}>
+          <DialogContent className="max-w-2xl rounded-[32px] shadow-2xl p-0 overflow-hidden border-none">
+            <div className="bg-slate-900 p-8 text-center">
+              <DialogTitle className="text-[20px] font-black text-white uppercase tracking-tighter italic mb-2">
+                Pusat Akses Portal QR
               </DialogTitle>
-              
-              <div className="bg-white p-6 rounded-[40px] border-4 border-slate-50 shadow-2xl shadow-slate-200/50 mb-8 flex items-center justify-center mx-auto w-fit">
-                <QRCodeSVG 
-                  value="https://dashboard-alfakhir.vercel.app/form" 
-                  size={220}
-                  level="H"
-                />
-              </div>
-              
-              <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed mb-10 max-w-[280px] mx-auto">
-                Satu QR untuk semua.<br/>Scan untuk memilih unit, ruangan, dan nama siswa.
+              <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">
+                Scan untuk langsung menuju halaman portal
               </p>
+            </div>
+            
+            <div className="p-10 grid grid-cols-2 gap-10 bg-white">
+              {/* Portal Observasi */}
+              <div className="flex flex-col items-center">
+                <div className="bg-slate-50 p-5 rounded-[32px] border-2 border-slate-100 shadow-sm mb-5">
+                  <QRCodeSVG 
+                    value={`${origin}/form`} 
+                    size={160}
+                    level="H"
+                  />
+                </div>
+                <h4 className="text-[13px] font-black text-slate-900 uppercase tracking-tight italic mb-1">Portal Observasi</h4>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">Formulir Mandiri Siswa & Ortu</p>
+              </div>
 
+              {/* Portal Akademik */}
+              <div className="flex flex-col items-center">
+                <div className="bg-blue-50 p-5 rounded-[32px] border-2 border-blue-100 shadow-sm mb-5">
+                  <QRCodeSVG 
+                    value={`${origin}/academic`} 
+                    size={160}
+                    level="H"
+                  />
+                </div>
+                <h4 className="text-[13px] font-black text-blue-600 uppercase tracking-tight italic mb-1">Portal Akademik</h4>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">Ujian Seleksi Akademik</p>
+              </div>
+            </div>
+            
+            <div className="p-8 bg-slate-50 border-t border-slate-100 flex justify-center">
               <Button 
-                className="w-full bg-slate-900 hover:bg-black text-white font-black italic h-14 rounded-2xl shadow-xl transition-all"
+                className="bg-slate-900 hover:bg-black text-white font-black italic h-12 px-10 rounded-xl shadow-xl transition-all"
                 onClick={() => setShowQR(false)}
               >
-                Tutup Dashboard QR
+                Selesai
               </Button>
             </div>
           </DialogContent>
