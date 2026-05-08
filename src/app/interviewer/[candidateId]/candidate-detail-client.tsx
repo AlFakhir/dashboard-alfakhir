@@ -470,20 +470,20 @@ export default function CandidateDetailClient({
             <div className="h-16 w-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <QrCode className="h-8 w-8 text-white" />
             </div>
-            <h2 className="text-xl font-bold uppercase tracking-tight">Akses Tes Akademik</h2>
-            <p className="text-emerald-100 text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80">Scan untuk mulai ujian</p>
+            <h2 className="text-xl font-bold uppercase tracking-tight">Portal Akademik SMP</h2>
+            <p className="text-emerald-100 text-[10px] font-bold uppercase tracking-widest mt-1 opacity-80">Portal Umum - Siswa Pilih Nama Sendiri</p>
           </div>
           <div className="p-10 bg-white flex flex-col items-center">
             <div className="p-4 bg-white border-4 border-slate-50 rounded-[32px] shadow-inner mb-6">
               <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`${window.location.origin}/academic/${candidate.id}`)}`}
-                alt="QR Code Akses Siswa"
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`${window.location.origin}/academic`)}`}
+                alt="QR Code Portal Akademik"
                 className="w-[200px] h-[200px]"
               />
             </div>
             <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 w-full text-center">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 leading-none">Link Manual</p>
-              <p className="text-[10px] font-bold text-slate-600 break-all select-all">{window.location.origin}/academic/{candidate.id}</p>
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 leading-none">Link Portal Umum</p>
+              <p className="text-[10px] font-bold text-slate-600 break-all select-all">{window.location.origin}/academic</p>
             </div>
           </div>
           <div className="p-6 bg-slate-50 border-t border-slate-100">
