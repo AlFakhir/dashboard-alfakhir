@@ -10,6 +10,7 @@ interface Question {
   id: string
   text: string
   subject: string
+  imageUrl?: string
   options: string[]
   order: number
 }
