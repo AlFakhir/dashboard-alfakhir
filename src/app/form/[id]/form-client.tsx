@@ -155,7 +155,7 @@ export default function PublicFormClient({ candidate, questions, role }: Props) 
         {/* Question Cards */}
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* PERMANENT PARENT QUESTIONS (Hardcoded) */}
-          {role === 'orang tua' && (
+          {role === 'parent' && (
             <>
               <div className="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm space-y-5">
                 <div className="space-y-1">

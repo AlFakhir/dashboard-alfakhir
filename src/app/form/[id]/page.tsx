@@ -102,7 +102,7 @@ export default async function PublicFormPage({ params, searchParams }: Props) {
         <PublicFormClient 
           candidate={candidate as any} 
           questions={questions as any} 
-          role={isStudentRole ? "siswa" : "orang tua"}
+          role={isStudentRole ? "student" : "parent"}
         />
       </div>
     </div>
