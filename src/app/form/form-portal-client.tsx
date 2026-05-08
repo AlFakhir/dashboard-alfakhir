@@ -313,10 +313,7 @@ export default function FormPortalClient({ candidates }: Props) {
                   >
                     <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center transition-colors overflow-hidden p-2", studentSubmitted ? "bg-slate-200" : role === "student" ? "bg-white/20" : "bg-white border border-slate-100 shadow-sm")}>
                       <img 
-                        src={level === "SD" 
-                          ? "/logo-sd.png" 
-                          : "/logo-smp.png"
-                        }
+                        src="/logo-smp.png"
                         alt="Logo Unit"
                         className="w-full h-full object-contain"
                       />
