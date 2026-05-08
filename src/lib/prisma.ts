@@ -1,16 +1,27 @@
 import { PrismaClient } from "@prisma/client"
-// Schema updated: 2026-05-08 - Adding academic assessment models
+import { PrismaNeon } from "@prisma/adapter-neon"
+import { Pool } from "@neondatabase/serverless"
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
 const createPrismaClient = () => {
-  // Kita kembalikan ke driver standar untuk stabilitas build dan Vercel
-  // Jika lokal Anda memblokir port 5432, npx prisma / npm run dev mungkin akan error saat FETCH data,
-  // tapi aplikasi tidak akan lagi CRASH (bind error) saat dijalankan.
+  const connectionString = process.env.DATABASE_URL
+  
+  // Gunakan adapter Neon jika URL mengarah ke Neon
+  if (connectionString?.includes("neon.tech")) {
+    const pool = new Pool({ connectionString })
+    const adapter = new PrismaNeon(pool)
+    return new PrismaClient({
+      adapter,
+      log: ["error"],
+    })
+  }
+
+  // Fallback ke client standar jika bukan Neon
   return new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error"] : ["error"],
+    log: ["error"],
   })
 }
 
