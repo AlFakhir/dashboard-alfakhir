@@ -37,6 +37,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token
     },
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user
+      const isPublicPage = 
+        nextUrl.pathname.startsWith("/academic") || 
+        nextUrl.pathname.startsWith("/form") ||
+        nextUrl.pathname.startsWith("/login") ||
+        nextUrl.pathname.startsWith("/api/public") ||
+        nextUrl.pathname.startsWith("/logo") ||
+        nextUrl.pathname === "/";
+      
+      if (isPublicPage) return true
+      return isLoggedIn
+    },
   },
   pages: {
     signIn: "/login",
