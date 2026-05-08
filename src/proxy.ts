@@ -9,8 +9,10 @@ export default auth((req) => {
   if (
     pathname.startsWith("/login") ||
     pathname.startsWith("/form") ||
+    pathname.startsWith("/academic") ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/form") ||
+    pathname.startsWith("/api/academic") ||
     pathname.startsWith("/api/webhook")
   ) {
     return NextResponse.next()
