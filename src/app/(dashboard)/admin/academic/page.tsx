@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
-import AcademicManagerClient from "./AcademicManagerClient"
+import AcademicManagerClient from "@/app/(dashboard)/admin/academic/AcademicManagerClient"
 
 export default async function AdminAcademicPage() {
   const session = await auth()

@@ -369,7 +369,8 @@ export default function AcademicManagerClient() {
                 </Button>
                 <Button 
                   onClick={handleSave}
-                  className="flex-[2] h-14 bg-slate-900 hover:bg-black text-white font-black italic rounded-2xl shadow-2xl shadow-slate-900/20 flex gap-3"
+                  style={{ flex: 2 }}
+                  className="h-14 bg-slate-900 hover:bg-black text-white font-black italic rounded-2xl shadow-2xl shadow-slate-900/20 flex gap-3"
                 >
                   <Save size={18} />
                   SIMPAN SOAL
