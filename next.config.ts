@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["googleapis", "@google/generative-ai"],
+  serverExternalPackages: ["googleapis", "@google/generative-ai", "@neondatabase/serverless", "@prisma/adapter-neon"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "lh3.googleusercontent.com" },

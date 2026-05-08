@@ -9,15 +9,21 @@ const globalForPrisma = globalThis as unknown as {
 const createPrismaClient = () => {
   const connectionString = process.env.DATABASE_URL
   
-  if (connectionString?.includes("neon.tech")) {
-    const pool = new Pool({ connectionString })
-    const adapter = new PrismaNeon(pool as any)
-    return new PrismaClient({
-      adapter: adapter as any,
-      log: ["error"],
-    })
+  // Hanya gunakan adapter Neon jika URL ada dan mengarah ke Neon
+  if (connectionString && connectionString.includes("neon.tech")) {
+    try {
+      const pool = new Pool({ connectionString })
+      const adapter = new PrismaNeon(pool as any)
+      return new PrismaClient({
+        adapter: adapter as any,
+        log: ["error"],
+      })
+    } catch (e) {
+      console.error("Prisma Neon Adapter error, falling back to standard:", e)
+    }
   }
 
+  // Fallback ke client standar jika bukan Neon atau gagal inisialisasi
   return new PrismaClient({
     log: ["error"],
   })
