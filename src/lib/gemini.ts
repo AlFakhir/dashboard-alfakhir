@@ -36,23 +36,22 @@ export async function generateCandidateSummary(
     .join("\n")
 
   const prompt = `
-Tugas: Buat ringkasan evaluasi SINGKAT & PADAT untuk calon siswa ${level} bernama ${candidateName}.
-Gaya: Profesional, langsung ke poin utama, tanpa basa-basi pembuka/penutup.
+Tugas: Buat ringkasan evaluasi yang SANGAT PENDEK, PADAT, dan JELAS untuk calon siswa ${level} bernama ${candidateName}.
+Karakteristik: Langsung ke inti (Executive Summary), bahasa profesional, tanpa kata-kata pembuka/basa-basi.
 
 ${level === "SMP" 
-  ? "SANGAT PENTING: Bandingkan jawaban ORANG TUA dan jawaban SISWA. Cari apakah ada ketidaksamaan informasi (kontradiksi) atau apakah mereka sangat selaras." 
-  : "Analisis jawaban ORANG TUA untuk melihat keseriusan dan profil keluarga."}
+  ? "BANDINGKAN JAWABAN: Soroti keselarasan atau kontradiksi antara jawaban ORANG TUA dan SISWA." 
+  : "PROFIL KELUARGA: Ringkas keseriusan dan profil keluarga berdasarkan jawaban ORANG TUA."}
 
 Data Jawaban:
 ${formattedAnswers}
 
-Format Output (WAJIB ADA):
-- **Analisis Utama**: (1-2 kalimat inti)
-- **Persentase Keselarasan**: [X]% (Hanya untuk SMP: Bandingkan kejujuran/kecocokan jawaban orang tua vs siswa. Untuk SD: Berikan skor reliabilitas jawaban)
-- **Kekuatan**: (Poin-poin singkat)
-- **Red Flags/Perhatian**: (Poin-poin singkat)
-- **Tanya Saat Wawancara**: (1-2 pertanyaan kunci untuk mengonfirmasi data yang meragukan)
-- **Skor Kesesuaian**: [X]/10 (Seberapa cocok calon ini dengan kriteria Al Fakhir)
+Format Output (WAJIB SINGKAT):
+**RINGKASAN INTI**: (Maksimal 2 kalimat padat)
+**KESELARASAN**: [X]% (Skor kecocokan data ortu vs siswa/skor reliabilitas)
+**POIN UTAMA**: (List 3-4 kata kunci/poin sangat pendek)
+**RED FLAGS**: (Jika ada, sebutkan langsung intinya. Jika tidak ada, tulis "Nihil")
+**REKOMENDASI SKOR**: [X]/10
   `.trim()
 
   const result = await model.generateContent(prompt)

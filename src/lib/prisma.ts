@@ -1,6 +1,10 @@
+import ws from "ws"
 import { PrismaClient } from "@prisma/client"
 import { PrismaNeon } from "@prisma/adapter-neon"
-import { Pool } from "@neondatabase/serverless"
+import { Pool, neonConfig } from "@neondatabase/serverless"
+
+// Konfigurasi WebSocket untuk environment Node.js (non-edge)
+neonConfig.webSocketConstructor = ws
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -9,7 +13,6 @@ const globalForPrisma = globalThis as unknown as {
 const createPrismaClient = () => {
   const connectionString = process.env.DATABASE_URL
   
-  // Hanya gunakan adapter Neon jika URL ada dan mengarah ke Neon
   if (connectionString && connectionString.includes("neon.tech")) {
     try {
       const pool = new Pool({ connectionString })
@@ -19,11 +22,10 @@ const createPrismaClient = () => {
         log: ["error"],
       })
     } catch (e) {
-      console.error("Prisma Neon Adapter error, falling back to standard:", e)
+      console.error("Prisma Neon Adapter error:", e)
     }
   }
 
-  // Fallback ke client standar jika bukan Neon atau gagal inisialisasi
   return new PrismaClient({
     log: ["error"],
   })
