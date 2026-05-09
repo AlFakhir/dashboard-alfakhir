@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 import {
   BarChart,
   Bar,
@@ -40,9 +41,15 @@ interface Props {
   }
 }
 
-function StatCard({ icon: Icon, color, value, label }: any) {
+function StatCard({ icon: Icon, color, value, label, delay = 0 }: any) {
   return (
-    <div className="bg-white border border-[#E2E8F0] rounded-2xl p-6 flex items-center gap-6 shadow-sm hover:shadow-md transition-all duration-300">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className="bg-white border border-[#E2E8F0] rounded-2xl p-6 flex items-center gap-6 shadow-sm hover:shadow-lg transition-all duration-300"
+    >
       <div className={`w-16 h-16 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
         <Icon className="h-8 w-8" />
       </div>
@@ -54,7 +61,7 @@ function StatCard({ icon: Icon, color, value, label }: any) {
           {label}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -111,24 +118,28 @@ export default function AdminOverviewClient({ stats: initialStats, role = "admin
           color="bg-[#E0F2F1] text-[#26A69A]" 
           value={stats.total} 
           label="KANDIDAT BARU" 
+          delay={0.1}
         />
         <StatCard 
           icon={History} 
           color="bg-[#E3F2FD] text-[#42A5F5]" 
           value={stats.notesTotal} 
           label="SELESAI OBSERVASI" 
+          delay={0.2}
         />
         <StatCard 
           icon={CheckCircle2} 
           color="bg-[#E8F5E9] text-[#66BB6A]" 
           value={stats.completed} 
           label="DITERIMA" 
+          delay={0.3}
         />
         <StatCard 
           icon={Clock} 
           color="bg-[#FFEBEE] text-[#EF5350]" 
           value={stats.pending} 
           label="TERTUNDA" 
+          delay={0.4}
         />
       </div>
 
@@ -263,52 +274,58 @@ export default function AdminOverviewClient({ stats: initialStats, role = "admin
               )
             }
             
-            return filtered.map((obs) => (
-              <Link 
-                key={obs.id} 
-                href={`/admin/candidates/${obs.candidateId}`}
-                className="flex items-center justify-between p-4 border border-[#F1F5F9] rounded-2xl hover:border-emerald-200 hover:bg-emerald-50/20 transition-all group cursor-pointer"
+            return filtered.map((obs, idx) => (
+              <motion.div
+                key={obs.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 * (idx % 10) }}
               >
-                <div className="flex items-center gap-4 flex-1">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-[14px] text-slate-500 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-all shrink-0 italic">
-                    {obs.candidate.name.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <div className="text-[14px] font-bold text-[#0F172A] truncate uppercase tracking-tight">{obs.candidate.name}</div>
-                      <Badge variant="muted" className="text-[9px] font-black uppercase tracking-tighter px-1.5 h-4 border-slate-200 text-slate-400 bg-white">
-                        UNIT {obs.candidate.level}
-                      </Badge>
+                <Link 
+                  href={`/admin/candidates/${obs.candidateId}`}
+                  className="flex items-center justify-between p-4 border border-[#F1F5F9] rounded-2xl hover:border-emerald-200 hover:bg-emerald-50/20 transition-all group cursor-pointer"
+                >
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-[14px] text-slate-500 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-all shrink-0 italic">
+                      {obs.candidate.name.charAt(0)}
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-1.5">
-                      <div className="text-[11px] text-[#475569] font-black uppercase tracking-tight flex items-center gap-1.5">
-                        <span className="opacity-50">PEWAWANCARA:</span>
-                        <span className="text-emerald-600 font-extrabold">{obs.interviewerName}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <div className="text-[14px] font-bold text-[#0F172A] truncate uppercase tracking-tight">{obs.candidate.name}</div>
+                        <Badge variant="muted" className="text-[9px] font-black uppercase tracking-tighter px-1.5 h-4 border-slate-200 text-slate-400 bg-white">
+                          UNIT {obs.candidate.level}
+                        </Badge>
                       </div>
-                      <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-300" />
-                      <div className="text-[11px] text-[#475569] font-black uppercase tracking-tight flex items-center gap-1.5">
-                        <span className="opacity-50">RUANGAN:</span>
-                        <span className="text-blue-600 font-extrabold">{obs.candidate.room || "-"}</span>
-                      </div>
-                      <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-300" />
-                      <div className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-widest">
-                        {formatDate(obs.createdAt)}
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-1.5">
+                        <div className="text-[11px] text-[#475569] font-black uppercase tracking-tight flex items-center gap-1.5">
+                          <span className="opacity-50">PEWAWANCARA:</span>
+                          <span className="text-emerald-600 font-extrabold">{obs.interviewerName}</span>
+                        </div>
+                        <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-300" />
+                        <div className="text-[11px] text-[#475569] font-black uppercase tracking-tight flex items-center gap-1.5">
+                          <span className="opacity-50">RUANGAN:</span>
+                          <span className="text-blue-600 font-extrabold">{obs.candidate.room || "-"}</span>
+                        </div>
+                        <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-300" />
+                        <div className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-widest">
+                          {formatDate(obs.createdAt)}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Badge 
-                    variant={obs.recommendation === "Terima" ? "success" : obs.recommendation === "Tolak" ? "danger" : "warning"} 
-                    className="px-3 py-1 font-black text-[9px] uppercase tracking-widest"
-                  >
-                    {obs.recommendation}
-                  </Badge>
-                  <div className="h-8 w-8 flex items-center justify-center hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-100 text-slate-300 hover:text-slate-600">
-                    <MoreVertical size={14} />
+                  <div className="flex items-center gap-4">
+                    <Badge 
+                      variant={obs.recommendation === "Terima" ? "success" : obs.recommendation === "Tolak" ? "danger" : "warning"} 
+                      className="px-3 py-1 font-black text-[9px] uppercase tracking-widest"
+                    >
+                      {obs.recommendation}
+                    </Badge>
+                    <div className="h-8 w-8 flex items-center justify-center hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-100 text-slate-300 hover:text-slate-600">
+                      <MoreVertical size={14} />
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))
           })()}
         </div>

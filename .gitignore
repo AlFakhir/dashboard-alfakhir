@@ -58,3 +58,10 @@ dev.db
 .gemini/
 scratch/
 
+# security
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!next.config.json
+!eslint.config.json

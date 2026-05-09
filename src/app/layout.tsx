@@ -1,5 +1,7 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { Toaster } from "react-hot-toast"
+import ProgressBar from "@/components/providers/progress-bar"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -10,6 +12,10 @@ export const metadata: Metadata = {
   description:
     "Sistem Dashboard Observasi dan Wawancara Penerimaan Siswa Baru SD/SMP Islam Modern Al Fakhir",
   keywords: ["Al Fakhir", "observasi", "wawancara", "penerimaan siswa", "PPDB"],
+  icons: {
+    icon: "/data.png",
+    apple: "/apple-touch-icon.png",
+  },
 }
 
 export default function RootLayout({
@@ -20,6 +26,9 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body>
+        <Suspense fallback={null}>
+          <ProgressBar />
+        </Suspense>
         {children}
         <Toaster
           position="top-right"
