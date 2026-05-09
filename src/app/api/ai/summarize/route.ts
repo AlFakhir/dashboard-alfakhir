@@ -32,10 +32,10 @@ export async function POST(request: Request) {
     })
 
     return NextResponse.json({ summary: summaryText })
-  } catch (error) {
+  } catch (error: any) {
     console.error("[POST /api/ai/summarize]", error)
     return NextResponse.json(
-      { error: "Gagal menghasilkan ringkasan AI" },
+      { error: error.message || "Gagal menghasilkan ringkasan AI" },
       { status: 500 }
     )
   }

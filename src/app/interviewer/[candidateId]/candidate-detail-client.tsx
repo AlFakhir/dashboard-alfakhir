@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { Candidate, InterviewerNote } from "@prisma/client"
@@ -88,6 +88,11 @@ export default function CandidateDetailClient({
   // AI summary state
   const [summary, setSummary] = useState<string | null>(savedSummary)
   const [generatingSummary, setGeneratingSummary] = useState(false)
+  const [origin, setOrigin] = useState("")
+
+  useEffect(() => {
+    setOrigin(window.location.origin)
+  }, [])
 
   const isLocked = existingNote?.isLocked ?? false
 
@@ -105,19 +110,24 @@ export default function CandidateDetailClient({
         body: JSON.stringify({
           candidateId: candidate.id,
           formResponse: answers.reduce((acc: any, curr: any) => {
-            acc[curr.question.text] = curr.answer
+            if (curr.question) {
+              acc[curr.question.text] = curr.value || curr.answer
+            }
             return acc
           }, {}),
           candidateName: candidate.name,
           level: candidate.level,
         }),
       })
-      if (!res.ok) throw new Error("Gagal generate")
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || "Gagal generate")
+      }
       const data = await res.json()
       setSummary(data.summary)
       toast.success("Ringkasan AI berhasil dibuat!")
-    } catch {
-      toast.error("Gagal menghasilkan ringkasan AI")
+    } catch (err: any) {
+      toast.error(err.message || "Gagal menghasilkan ringkasan AI")
     } finally {
       setGeneratingSummary(false)
     }
@@ -368,14 +378,35 @@ export default function CandidateDetailClient({
               {!summary && !generatingSummary ? (
                 <div className="text-center py-6 space-y-4">
                   <p className="text-xs text-slate-400 font-bold italic">Belum ada analisis profil.</p>
-                  <Button onClick={handleGenerateSummary} size="sm" className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md">Generate Analisis</Button>
+                  <Button 
+                    onClick={handleGenerateSummary} 
+                    disabled={generatingSummary}
+                    size="sm" 
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md"
+                  >
+                    {generatingSummary ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : null}
+                    Generate Analisis
+                  </Button>
                 </div>
-              ) : generatingSummary ? (
-                <SkeletonSummary />
               ) : (
                 <div className="space-y-4">
-                  <div className="prose prose-sm prose-slate max-w-none prose-p:leading-relaxed prose-strong:text-purple-700 text-[13px]" dangerouslySetInnerHTML={{ __html: renderMarkdown(summary!) }} />
-                  <Button variant="outline" size="sm" onClick={handleGenerateSummary} className="w-full h-9 border-purple-100 text-purple-600 hover:bg-purple-50 font-bold rounded-xl uppercase tracking-widest text-[9px]">Generate Ulang</Button>
+                  {generatingSummary ? (
+                    <SkeletonSummary />
+                  ) : (
+                    <>
+                      <div className="prose prose-sm prose-slate max-w-none prose-p:leading-relaxed prose-strong:text-purple-700 text-[13px]" dangerouslySetInnerHTML={{ __html: renderMarkdown(summary!) }} />
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleGenerateSummary} 
+                        disabled={generatingSummary}
+                        className="w-full h-9 border-purple-100 text-purple-600 hover:bg-purple-50 font-bold rounded-xl uppercase tracking-widest text-[9px]"
+                      >
+                        {generatingSummary ? <RefreshCw className="h-3 w-3 mr-2 animate-spin" /> : null}
+                        Generate Ulang
+                      </Button>
+                    </>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -479,14 +510,14 @@ export default function CandidateDetailClient({
           <div className="p-10 bg-white flex flex-col items-center">
             <div className="p-4 bg-white border-4 border-slate-50 rounded-[32px] shadow-inner mb-6">
               <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`${window.location.origin}/academic`)}`}
+                src={origin ? `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`${origin}/academic`)}` : ""}
                 alt="QR Code Portal Akademik"
                 className="w-[200px] h-[200px]"
               />
             </div>
             <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 w-full text-center">
               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 leading-none">Link Portal Umum</p>
-              <p className="text-[10px] font-bold text-slate-600 break-all select-all">{window.location.origin}/academic</p>
+              <p className="text-[10px] font-bold text-slate-600 break-all select-all">{origin}/academic</p>
             </div>
           </div>
           <div className="p-6 bg-slate-50 border-t border-slate-100">
