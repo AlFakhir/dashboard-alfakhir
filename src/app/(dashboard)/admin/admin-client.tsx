@@ -19,6 +19,7 @@ import {
   Clock,
   MoreVertical,
   LayoutGrid,
+  Search
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { formatDate, getAcademicYear } from "@/lib/utils"
@@ -59,6 +60,7 @@ function StatCard({ icon: Icon, color, value, label }: any) {
 
 export default function AdminOverviewClient({ stats: initialStats, role = "admin" }: Props & { role?: string }) {
   const [stats, setStats] = useState(initialStats)
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -223,22 +225,45 @@ export default function AdminOverviewClient({ stats: initialStats, role = "admin
 
       {/* BOTTOM ROW: Recent Observations */}
       <div className="bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-sm">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h3 className="text-[18px] font-bold text-[#0F172A]">Observasi Terkini</h3>
             <p className="text-[13px] text-[#94A3B8] mt-1 font-medium">Data input catatan terbaru dari tim pewawancara</p>
           </div>
-          <button className="h-10 w-10 flex items-center justify-center hover:bg-slate-50 rounded-xl transition-all border border-[#E2E8F0]">
-            <MoreVertical size={18} className="text-[#94A3B8]" />
-          </button>
-        </div>
-        <div className="space-y-3">
-          {stats.recentObservations.length === 0 ? (
-            <div className="text-center py-10 text-slate-400 font-medium bg-slate-50 rounded-2xl border-2 border-dashed border-slate-100">
-              Belum ada data observasi masuk
+          
+          <div className="flex items-center gap-3">
+            <div className="relative group">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Cari nama kandidat..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-10 pl-10 pr-4 w-full md:w-64 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+              />
             </div>
-          ) : (
-            stats.recentObservations.map((obs) => (
+            <button className="h-10 w-10 flex items-center justify-center hover:bg-slate-50 rounded-xl transition-all border border-[#E2E8F0]">
+              <MoreVertical size={18} className="text-[#94A3B8]" />
+            </button>
+          </div>
+        </div>
+        
+        <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+          {(() => {
+            const filtered = stats.recentObservations.filter(obs => 
+              obs.candidate.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              obs.interviewerName.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+            
+            if (filtered.length === 0) {
+              return (
+                <div className="text-center py-10 text-slate-400 font-medium bg-slate-50 rounded-2xl border-2 border-dashed border-slate-100">
+                  {searchQuery ? `Tidak ada hasil untuk "${searchQuery}"` : "Belum ada data observasi masuk"}
+                </div>
+              )
+            }
+            
+            return filtered.map((obs) => (
               <Link 
                 key={obs.id} 
                 href={`/admin/candidates/${obs.candidateId}`}
@@ -285,7 +310,7 @@ export default function AdminOverviewClient({ stats: initialStats, role = "admin
                 </div>
               </Link>
             ))
-          )}
+          })()}
         </div>
       </div>
       {/* Footer Branding */}

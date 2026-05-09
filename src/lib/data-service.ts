@@ -16,7 +16,7 @@ export async function getDashboardStats(level?: string) {
 
   const recentObservations = await prisma.interviewerNote.findMany({
     where: level ? { candidate: { level: level as any } } : {},
-    take: 5,
+    take: 100,
     orderBy: { createdAt: "desc" },
     include: {
       candidate: {
